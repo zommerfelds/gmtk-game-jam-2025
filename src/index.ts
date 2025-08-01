@@ -55,6 +55,12 @@ const config = {
     default: "matter",
     matter: {
       gravity: { x: 0, y: 0 },
+      runner: {
+        // Use fixed time step for reproducible physics. However this means that the speed of the game
+        // will be tied to the frame rate.
+        isFixed: true,
+        fps: 60,
+      },
     },
   },
   scale: {
