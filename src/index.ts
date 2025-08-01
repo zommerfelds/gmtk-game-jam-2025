@@ -10,7 +10,7 @@ class MyGame extends Phaser.Scene {
 
   preload() {
     this.load.path = "assets/";
-    this.load.image("rocket", "sprite_rocket.png");
+    this.load.aseprite("rocket", "sprite_rocket.png", "sprite_rocket.json");
   }
 
   create() {
@@ -18,7 +18,7 @@ class MyGame extends Phaser.Scene {
 
     this.rocket = this.matter.add.image(400, 300, "rocket");
     this.rocket.setFrictionAir(0.02);
-    this.rocket.setRectangle(this.rocket.width * 0.5, this.rocket.height * 0.7);
+    this.rocket.setRectangle(this.rocket.width * 0.5, this.rocket.height * 0.8);
     this.rocket.setOrigin(0.5, 0.5);
 
     this.cameras.main.startFollow(this.rocket);
