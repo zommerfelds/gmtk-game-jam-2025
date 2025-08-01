@@ -1,8 +1,12 @@
 import "phaser";
+import PlayerRocket from "./rockets/player_rocket";
+import ReversibleRocket from "./rockets/reversible_rocket";
+import RecordedRocket from "./rockets/recorded_rocket";
 
 class MyGame extends Phaser.Scene {
-  private rocket: Phaser.Physics.Matter.Sprite;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private playerRocket?: PlayerRocket;
+  private recordedRockets: RecordedRocket[];
 
   constructor() {
     super();
@@ -21,11 +25,10 @@ class MyGame extends Phaser.Scene {
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.rocket = this.matter.add.sprite(400, 300, "rocket");
-    this.anims.createFromAseprite("rocket", undefined, this.rocket);
-    this.rocket.setFrictionAir(0.02);
-    this.rocket.setRectangle(this.rocket.width * 0.5, this.rocket.height * 0.8);
-    this.rocket.setOrigin(0.5, 0.5);
+    this.playerRocket = new PlayerRocket(
+      new ReversibleRocket(this.matter, this.anims, 400, 300),
+      this.cameras.main
+    );
 
     const island = this.matter.add.sprite(400, 380, "island_ireland");
     this.anims.createFromAseprite("island_ireland", undefined, island);
@@ -33,36 +36,13 @@ class MyGame extends Phaser.Scene {
     island.setRectangle(island.width * 0.8, island.height * 0.3);
     island.setOrigin(0.5, 0.7);
     island.setStatic(true);
-
-    this.cameras.main.startFollow(this.rocket);
   }
 
   update() {
-    const torqueAmount = 0.01;
-    const body = this.rocket.body as MatterJS.BodyType;
-    if (this.cursors.left?.isDown) body.torque -= torqueAmount;
-    else if (this.cursors.right?.isDown) body.torque += torqueAmount;
+    const yAxis = this.cursors.up?.isDown ? 1.0 : (this.cursors.down?.isDown ? -1.0 : 0);
+    const xAxis = this.cursors.right?.isDown ? 1.0 : (this.cursors.left?.isDown ? -1.0 : 0);
 
-    const baseThrust = 0.0005;
-    let thrustDir = 0;
-    if (this.cursors.up?.isDown) {
-      thrustDir = 1;
-      this.rocket.play({ key: "Foreward", repeat: -1 }, true);
-    } else if (this.cursors.down?.isDown) {
-      thrustDir = -0.5; // half strength backwards
-      this.rocket.play({ key: "Backward", repeat: -1 }, true);
-    } else {
-      this.rocket.play({ key: "Idle", repeat: -1 }, true);
-    }
-
-    if (thrustDir !== 0) {
-      const f = baseThrust * thrustDir;
-      const force = new Phaser.Math.Vector2(
-        Math.cos(this.rocket.rotation - Math.PI / 2) * f,
-        Math.sin(this.rocket.rotation - Math.PI / 2) * f
-      );
-      this.rocket.applyForce(force);
-    }
+    this.playerRocket.applyInput(xAxis, yAxis);
   }
 }
 
