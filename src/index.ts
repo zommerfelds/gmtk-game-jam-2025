@@ -11,6 +11,7 @@ class MyGame extends Phaser.Scene {
   preload() {
     this.load.path = "assets/";
     this.load.aseprite("rocket", "sprite_rocket.png", "sprite_rocket.json");
+    this.load.image("island_ireland", "sprite_island_ireland.png");
   }
 
   create() {
@@ -22,10 +23,12 @@ class MyGame extends Phaser.Scene {
     this.rocket.setRectangle(this.rocket.width * 0.5, this.rocket.height * 0.8);
     this.rocket.setOrigin(0.5, 0.5);
 
-    this.cameras.main.startFollow(this.rocket);
+    const island = this.matter.add.image(400, 380, "island_ireland");
+    island.setRectangle(island.width * 0.8, island.height * 0.3);
+    island.setOrigin(0.5, 0.7);
+    island.setStatic(true);
 
-    const platform = this.add.rectangle(400, 580, 200, 20, 0xffffff);
-    this.matter.add.gameObject(platform, { isStatic: true });
+    this.cameras.main.startFollow(this.rocket);
   }
 
   update() {
