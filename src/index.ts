@@ -2,11 +2,19 @@ import "phaser";
 import PlayerRocket from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocket from "./rockets/recorded_rocket";
+import Text = Phaser.GameObjects.Text;
+
+const TARGET_FRAMERATE = 60;
+const CYCLE_SECONDS = 60;
+
+const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 
 class MyGame extends Phaser.Scene {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private playerRocket?: PlayerRocket;
-  private recordedRockets: RecordedRocket[];
+  private recordedRockets: RecordedRocket[] = [];
+  private currentCycleStep = 0;
+  private cycleText: Text;
 
   constructor() {
     super();
@@ -24,10 +32,12 @@ class MyGame extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
+    this.cycleText = this.add.text(0, 0, "");
 
     this.playerRocket = new PlayerRocket(
       new ReversibleRocket(this.matter, this.anims, 400, 300),
-      this.cameras.main
+      this.cameras.main,
+      CYCLE_STEPS
     );
 
     const island = this.matter.add.sprite(400, 380, "island_ireland");
@@ -39,10 +49,28 @@ class MyGame extends Phaser.Scene {
   }
 
   update() {
-    const yAxis = this.cursors.up?.isDown ? 1.0 : (this.cursors.down?.isDown ? -1.0 : 0);
-    const xAxis = this.cursors.right?.isDown ? 1.0 : (this.cursors.left?.isDown ? -1.0 : 0);
+    if (this.playerRocket && this.playerRocket.shouldFinishRecording()) {
+      this.recordedRockets.push(this.playerRocket.finishRecording());
+      this.playerRocket = null;
+    } else if (this.playerRocket) {
+      const yAxis = this.cursors.up?.isDown ? 1.0 : (this.cursors.down?.isDown ? -1.0 : 0);
+      const xAxis = this.cursors.right?.isDown ? 1.0 : (this.cursors.left?.isDown ? -1.0 : 0);
+      this.playerRocket.applyInput(xAxis, yAxis);
+    } else if (this.cursors.space?.isDown) {
+      this.playerRocket = new PlayerRocket(
+        new ReversibleRocket(this.matter, this.anims, 400, 300),
+        this.cameras.main,
+        CYCLE_STEPS
+      );
+    }
 
-    this.playerRocket.applyInput(xAxis, yAxis);
+    this.recordedRockets.forEach(recordedRocket => {
+      recordedRocket.applyNextRecordedInput();
+    });
+
+    this.currentCycleStep += 1;
+    this.currentCycleStep %= CYCLE_STEPS;
+    this.cycleText.setText(`Current time in cycle: ${this.currentCycleStep / TARGET_FRAMERATE}/${CYCLE_SECONDS}`)
   }
 }
 
@@ -56,7 +84,7 @@ const config = {
         // Use fixed time step for reproducible physics. However this means that the speed of the game
         // will be tied to the frame rate.
         isFixed: true,
-        fps: 60,
+        fps: TARGET_FRAMERATE,
       },
       // debug: true, // Uncomment to see physics shapes
     },

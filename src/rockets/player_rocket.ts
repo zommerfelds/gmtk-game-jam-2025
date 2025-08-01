@@ -10,11 +10,13 @@ export default class PlayerRocket implements Landable {
   private rocket: Rocket;
   private recordedInputs: RecordedInput[];
   private mainCamera: Camera;
+  private cycleSteps: number;
 
-  constructor(rocket: Rocket, mainCamera: Camera) {
+  constructor(rocket: Rocket, mainCamera: Camera, cycleSteps: number) {
     this.rocket = rocket;
     this.recordedInputs = [];
     this.mainCamera = mainCamera;
+    this.cycleSteps = cycleSteps;
 
     this.rocket.followWithCamera(mainCamera);
   }
@@ -33,6 +35,10 @@ export default class PlayerRocket implements Landable {
   public applyInput(x: number, y: number) {
     this.rocket.applyInput(x, y);
     this.recordedInputs.push({ x, y });
+  }
+
+  public shouldFinishRecording(): boolean {
+    return this.recordedInputs.length == this.cycleSteps;
   }
 
   /**
