@@ -19,18 +19,17 @@ class MyGame extends Phaser.Scene {
   }
 
   create() {
-    this.anims.createFromAseprite("rocket");
-    this.anims.createFromAseprite("island_ireland");
-
     this.cursors = this.input.keyboard.createCursorKeys();
 
     this.rocket = this.matter.add.sprite(400, 300, "rocket");
+    this.anims.createFromAseprite("rocket", undefined, this.rocket);
     this.rocket.setFrictionAir(0.02);
     this.rocket.setRectangle(this.rocket.width * 0.5, this.rocket.height * 0.8);
     this.rocket.setOrigin(0.5, 0.5);
 
     const island = this.matter.add.sprite(400, 380, "island_ireland");
-    island.play({ key: "", repeat: -1 });
+    this.anims.createFromAseprite("island_ireland", undefined, island);
+    island.play({ key: "Idle", repeat: -1 });
     island.setRectangle(island.width * 0.8, island.height * 0.3);
     island.setOrigin(0.5, 0.7);
     island.setStatic(true);
