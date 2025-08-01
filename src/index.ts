@@ -56,8 +56,16 @@ class MyGame extends Phaser.Scene {
       this.recordedRockets.push(this.playerRocket.finishRecording());
       this.playerRocket = null;
     } else if (this.playerRocket) {
-      const yAxis = this.cursors.up?.isDown ? 1.0 : (this.cursors.down?.isDown ? -1.0 : 0);
-      const xAxis = this.cursors.right?.isDown ? 1.0 : (this.cursors.left?.isDown ? -1.0 : 0);
+      const yAxis = this.cursors.up?.isDown
+        ? 1.0
+        : this.cursors.down?.isDown
+          ? -1.0
+          : 0;
+      const xAxis = this.cursors.right?.isDown
+        ? 1.0
+        : this.cursors.left?.isDown
+          ? -1.0
+          : 0;
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
       this.cycleWhenRecordingStarted = this.currentCycleStep;
@@ -68,16 +76,22 @@ class MyGame extends Phaser.Scene {
       );
     }
 
-    this.recordedRockets.forEach(recordedRocket => {
+    this.recordedRockets.forEach((recordedRocket) => {
       recordedRocket.applyNextRecordedInput();
     });
 
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;
-    this.cycleText.setText(`Current time in cycle: ${this.currentCycleStep / TARGET_FRAMERATE}/${CYCLE_SECONDS}`)
+    this.cycleText.setText(
+      `Current time in cycle: ${(
+        this.currentCycleStep / TARGET_FRAMERATE
+      ).toFixed(1)}/${CYCLE_SECONDS}`
+    );
     this.recordingText.setText(
       this.playerRocket ?
-        `Recording (started at ${this.cycleWhenRecordingStarted / TARGET_FRAMERATE})` :
+        `Recording (started at ${(
+          this.cycleWhenRecordingStarted / TARGET_FRAMERATE
+        ).toFixed(1)})` :
         `Press space to spawn another rocket.`
     );
   }
