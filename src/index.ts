@@ -15,6 +15,8 @@ class MyGame extends Phaser.Scene {
   private recordedRockets: RecordedRocket[] = [];
   private currentCycleStep = 0;
   private cycleText: Text;
+  private cycleWhenRecordingStarted = 0;
+  private recordingText: Text;
 
   constructor() {
     super();
@@ -32,7 +34,8 @@ class MyGame extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.cycleText = this.add.text(0, 0, "");
+    this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
+    this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
 
     this.playerRocket = new PlayerRocket(
       new ReversibleRocket(this.matter, this.anims, 400, 300),
@@ -57,6 +60,7 @@ class MyGame extends Phaser.Scene {
       const xAxis = this.cursors.right?.isDown ? 1.0 : (this.cursors.left?.isDown ? -1.0 : 0);
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
+      this.cycleWhenRecordingStarted = this.currentCycleStep;
       this.playerRocket = new PlayerRocket(
         new ReversibleRocket(this.matter, this.anims, 400, 300),
         this.cameras.main,
@@ -71,6 +75,11 @@ class MyGame extends Phaser.Scene {
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;
     this.cycleText.setText(`Current time in cycle: ${this.currentCycleStep / TARGET_FRAMERATE}/${CYCLE_SECONDS}`)
+    this.recordingText.setText(
+      this.playerRocket ?
+        `Recording (started at ${this.cycleWhenRecordingStarted / TARGET_FRAMERATE})` :
+        `Press space to spawn another rocket.`
+    );
   }
 }
 
