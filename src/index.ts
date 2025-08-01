@@ -1,7 +1,7 @@
 import "phaser";
 
 class MyGame extends Phaser.Scene {
-  private rocket: Phaser.Physics.Matter.Image;
+  private rocket: Phaser.Physics.Matter.Sprite;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
   constructor() {
@@ -16,7 +16,8 @@ class MyGame extends Phaser.Scene {
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.rocket = this.matter.add.image(400, 300, "rocket");
+    this.anims.createFromAseprite("rocket");
+    this.rocket = this.matter.add.sprite(400, 300, "rocket");
     this.rocket.setFrictionAir(0.02);
     this.rocket.setRectangle(this.rocket.width * 0.5, this.rocket.height * 0.8);
     this.rocket.setOrigin(0.5, 0.5);
@@ -35,8 +36,15 @@ class MyGame extends Phaser.Scene {
 
     const baseThrust = 0.0005;
     let thrustDir = 0;
-    if (this.cursors.up?.isDown) thrustDir = 1;
-    else if (this.cursors.down?.isDown) thrustDir = -0.5; // half strength backwards
+    if (this.cursors.up?.isDown) {
+      thrustDir = 1;
+      this.rocket.play({ key: "Foreward", repeat: -1 }, true);
+    } else if (this.cursors.down?.isDown) {
+      thrustDir = -0.5; // half strength backwards
+      this.rocket.play({ key: "Backward", repeat: -1 }, true);
+    } else {
+      this.rocket.play({ key: "Idle", repeat: -1 }, true);
+    }
 
     if (thrustDir !== 0) {
       const f = baseThrust * thrustDir;
@@ -61,6 +69,7 @@ const config = {
         isFixed: true,
         fps: 60,
       },
+      // debug: true, // Uncomment to see physics shapes
     },
   },
   scale: {
