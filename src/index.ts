@@ -11,19 +11,26 @@ class MyGame extends Phaser.Scene {
   preload() {
     this.load.path = "assets/";
     this.load.aseprite("rocket", "sprite_rocket.png", "sprite_rocket.json");
-    this.load.image("island_ireland", "sprite_island_ireland.png");
+    this.load.aseprite(
+      "island_ireland",
+      "sprite_island_ireland.png",
+      "sprite_island_ireland.json"
+    );
   }
 
   create() {
+    this.anims.createFromAseprite("rocket");
+    this.anims.createFromAseprite("island_ireland");
+
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.anims.createFromAseprite("rocket");
     this.rocket = this.matter.add.sprite(400, 300, "rocket");
     this.rocket.setFrictionAir(0.02);
     this.rocket.setRectangle(this.rocket.width * 0.5, this.rocket.height * 0.8);
     this.rocket.setOrigin(0.5, 0.5);
 
-    const island = this.matter.add.image(400, 380, "island_ireland");
+    const island = this.matter.add.sprite(400, 380, "island_ireland");
+    island.play({ key: "", repeat: -1 });
     island.setRectangle(island.width * 0.8, island.height * 0.3);
     island.setOrigin(0.5, 0.7);
     island.setStatic(true);
