@@ -7,37 +7,11 @@ class MyGame extends Phaser.Scene {
 
   preload() {
     this.load.path = "assets/";
-    this.load.image("platform", "Platform.png");
-    this.load.aseprite("swordGuy", "Sword guy.png", "Sword guy.json");
+    this.load.image("rocket", "sprite_rocket.png");
   }
 
   create() {
-    this.anims.createFromAseprite("swordGuy");
-    this.add.image(64, 66, "platform");
-    const swordGuy = this.add
-      .sprite(88, 50, "swordGuy")
-      .play({ key: "walk", repeat: -1 });
-
-    this.tweens.chain({
-      targets: swordGuy,
-      tweens: [
-        {
-          x: 40,
-          duration: 1500,
-          onComplete: () => {
-            swordGuy.flipX = true;
-          },
-        },
-        {
-          x: 88,
-          duration: 1500,
-          onComplete: () => {
-            swordGuy.flipX = false;
-          },
-        },
-      ],
-      loop: -1,
-    });
+    const rocket = this.add.image(400, 300, "rocket");
   }
 }
 
@@ -47,8 +21,8 @@ const config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  width: 128,
-  height: 96,
+  width: 800,
+  height: 600,
   zoom: 5,
   pixelArt: true,
   antialias: false,
