@@ -54,31 +54,15 @@ export default class ReversibleRocket implements Rocket {
           if (this.isDestroyed) {
             return;
           }
-          let shouldExplode = false;
           if (bodyA.label == "rocket" && bodyB.label == "rocket") {
             // Two rockets colliding always explode each rocket.
-            shouldExplode = true;
+            this.explode(scene, onRocketDestroyed);
           } else {
             console.log("angular:", 15 * this.angularVelocityAbs, "linear", this.linearVelocityAbs);
             const combinedVelocity = 15 * this.angularVelocityAbs + this.linearVelocityAbs;
             if (combinedVelocity > 0.8) {
-              shouldExplode = true;
+              this.explode(scene, onRocketDestroyed);
             }
-          }
-          if (shouldExplode) {
-            this.isDestroyed = true;
-            const positionX = this.sprite.x;
-            const positionY = this.sprite.y;
-            this.sprite.destroy(true);
-
-            // Play explosion animation.
-            const explosion= scene.add.sprite(positionX, positionY, "effect_explosion");
-            scene.anims.createFromAseprite("effect_explosion", undefined, explosion);
-            explosion.play({ key: "Idle", repeat: 0 }, true);
-            setTimeout(() => {
-              explosion.destroy(true);
-            }, 10_000);
-            onRocketDestroyed(this);
           }
         }
       });
@@ -127,6 +111,22 @@ export default class ReversibleRocket implements Rocket {
     this.sprite.setVelocity(0, 0);
     this.sprite.setAngularVelocity(0);
     console.log("Landed!");
+  }
+
+  public explode(scene: Phaser.Scene, onRocketDestroyed: (r: Rocket) => void) {
+    this.isDestroyed = true;
+    const positionX = this.sprite.x;
+    const positionY = this.sprite.y;
+    this.sprite.destroy(true);
+
+    // Play explosion animation.
+    const explosion= scene.add.sprite(positionX, positionY, "effect_explosion");
+    scene.anims.createFromAseprite("effect_explosion", undefined, explosion);
+    explosion.play({ key: "Idle", repeat: 0 }, true);
+    setTimeout(() => {
+      explosion.destroy(true);
+    }, 10_000);
+    onRocketDestroyed(this);
   }
 
   public getFootPosition(): Vector2 {
