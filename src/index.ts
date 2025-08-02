@@ -23,6 +23,7 @@ class MyGame extends Phaser.Scene {
   private cycleWhenRecordingStarted = 0;
   private recordingText: Text;
   private returnToStartText: Text;
+  private outstandingGoalsText: Text;
   private islandManager: IslandManager;
   private lastSpawnPoint?: Vector2Like = null;
   private allowCameraMovement = false;
@@ -56,12 +57,13 @@ class MyGame extends Phaser.Scene {
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.tabKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TAB);
-    this.islandManager = new IslandManager(this);
+    this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
     const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
     this.cameras.main.centerOn(spawn.x, spawn.y);
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
     this.returnToStartText = this.add.text(5, 35, "").setScrollFactor(0);
+    this.outstandingGoalsText = this.add.text(5, 580, "").setScrollFactor(0);
   }
 
   update() {
@@ -165,6 +167,8 @@ class MyGame extends Phaser.Scene {
       recordedRocket.applyNextRecordedInput();
     });
 
+    this.islandManager.processCycleStep();
+
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;
     this.cycleText.setText(
@@ -184,6 +188,7 @@ class MyGame extends Phaser.Scene {
           : "All good, you're back at the start :)"
         : "",
     );
+    this.outstandingGoalsText.setText(this.islandManager.getOutstandingGoals());
   }
 
   private onRocketDestroyed(rocket: Rocket) {

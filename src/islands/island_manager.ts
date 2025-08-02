@@ -14,7 +14,8 @@ export default class IslandManager {
   private readonly discoveredSpawnerIslands: Set<SpawnerIsland> = new Set();
   private readonly undiscoveredSpawnerIslands: Set<SpawnerIsland> = new Set();
   private selectedSpawnerIsland: SpawnerIsland;
-  constructor(scene: Phaser.Scene) {
+
+  constructor(scene: Phaser.Scene, cycleSteps: number, targetFramerate: number) {
     const onSpawnerDiscovered = (spawner: SpawnerIsland) => {
       this.discoveredSpawnerIslands.add(spawner);
       this.undiscoveredSpawnerIslands.delete(spawner);
@@ -41,7 +42,7 @@ export default class IslandManager {
     this.islands = [
       new IslandDoom(scene, 100, 500),
       new IslandCacti(scene, 300, 100),
-      new IslandSkull(scene, 0, 0),
+      new IslandSkull(scene, 0, 0, cycleSteps, targetFramerate),
       new IslandCave(scene, 700, 300),
       new Island(scene, 1400, 200, "island_lake"),
       ...spawnerIslands,
@@ -81,6 +82,16 @@ export default class IslandManager {
       }
       this.snapToIsland(rocket, landedIsland);
     }
+  }
+
+  getOutstandingGoals(): string[] {
+    return this.islands
+      .filter(island => island.isGoalToBeHappy())
+      .map(island => island.getDescriptionToBeHappy());
+  }
+
+  processCycleStep() {
+    this.islands.forEach(island => island.processCycleStep());
   }
 
   private snapToIsland(rocket: Rocket, island: Island) {
