@@ -23,6 +23,8 @@ export interface Rocket extends Landable {
    */
   applyInput(x: number, y: number): void;
 
+  explode(scene: Phaser.Scene, onRocketDestroyed: (r: Rocket) => void): void;
+
   /**
    * Makes the specified camera follow this rocket.
    *
