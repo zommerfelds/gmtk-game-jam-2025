@@ -13,19 +13,26 @@ export default class GameUI {
   private watchBody: Image;
   private watchArrow: Image;
   private recordingStartMarker: Arc;
+  private instructionText: Text;
 
   constructor(scene: Phaser.Scene) {
     this.recordingText = scene.add
       .text(500, 5, "", { wordWrap: { width: 400 } })
       .setScrollFactor(0);
     this.returnToStartText = scene.add
-      .text(5, 145, "", { wordWrap: { width: 170 } })
+      .text(5, 145, "", { wordWrap: { width: 160 }, align: "center" })
       .setScrollFactor(0);
     this.outstandingGoalsText = scene.add
       .text(5, 580, "", { wordWrap: { width: 400 } })
       .setScrollFactor(0);
     this.watchBody = scene.add.image(70, 70, "watch_body").setScrollFactor(0);
     this.watchArrow = scene.add.image(70, 70, "watch_arrow").setScrollFactor(0);
+
+    const cam = scene.cameras.main;
+    this.instructionText = scene.add
+      .text(cam.centerX, cam.centerY - 120, "", { align: "center", fontSize: "24px" })
+      .setOrigin(0.5)
+      .setScrollFactor(0);
     this.recordingStartMarker = scene.add.circle(70, 70, 6, 0xff0000).setScrollFactor(0);
     this.recordingStartMarker.setVisible(false);
   }
@@ -38,26 +45,30 @@ export default class GameUI {
     outstandingGoals: string[],
     hasMultipleSpawners: boolean,
   ) {
-    this.recordingText.setText(
-      playerRocket
-        ? `Recording`
-        : `Press space to spawn a rocket${
-            hasMultipleSpawners ? "\nPress tab to switch spawner" : ""
-          }`,
-    );
+    this.recordingText.setText(playerRocket ? `Recording` : "");
 
     let returnMsg = "";
-    if (playerRocket && lastSpawnPoint) {
-      returnMsg =
-        playerRocket.getFootPosition().distance(lastSpawnPoint) !== 0
-          ? "Return to start before the loop ends!"
-          : "All good, you're back at the start :)";
+    if (
+      playerRocket &&
+      lastSpawnPoint &&
+      playerRocket.getFootPosition().distance(lastSpawnPoint) !== 0
+    ) {
+      returnMsg = "Return to the start before the loop ends!";
     }
     this.returnToStartText.setText(returnMsg);
 
     const fractionOfCycle = currentCycleStep / TARGET_FRAMERATE / CYCLE_SECONDS;
     this.outstandingGoalsText.setText(outstandingGoals);
     this.watchArrow.setRotation(fractionOfCycle * Math.PI * 2);
+
+    // Handle center instruction text
+    this.instructionText.setText(
+      playerRocket
+        ? ""
+        : `Press space to spawn a rocket${
+            hasMultipleSpawners ? "\nPress tab to switch spawner" : ""
+          }`,
+    );
     if (playerRocket) {
       const blink = Math.floor(currentCycleStep / (TARGET_FRAMERATE / 2)) % 2 === 0;
       this.recordingText.setVisible(blink);
