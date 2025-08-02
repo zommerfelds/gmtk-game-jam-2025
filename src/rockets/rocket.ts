@@ -2,6 +2,7 @@ import "phaser";
 import Vector2 = Phaser.Math.Vector2;
 import Landable from "../game_objects/Landable";
 import Camera = Phaser.Cameras.Scene2D.Camera;
+import {GoodsType} from "../islands/goods";
 
 export enum RocketControlType {
   /** Rockets that can move in multiple directions directly. */
@@ -23,7 +24,21 @@ export interface Rocket extends Landable {
    */
   applyInput(x: number, y: number): void;
 
-  explode(scene: Phaser.Scene, onRocketDestroyed: (r: Rocket) => void): void;
+  explode(): void;
+
+  /**
+   * Attempts to store the given good into the rocket. May fail if the rocket is already full.
+   * @param {GoodsType} good - The good to store.
+   * @return {boolean} Whether the good was stored.
+   */
+  tryStoreGood(good: GoodsType): boolean;
+
+  /**
+   * Attempts to take the given good from the rocket. May fail if the rocket doesn't have that good on board.
+   * @param {GoodsType} good - The good to take.
+   * @return {boolean} Whether the good was taken.
+   */
+  tryTakeGood(good: GoodsType): boolean;
 
   /**
    * Makes the specified camera follow this rocket.
