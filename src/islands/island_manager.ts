@@ -6,6 +6,7 @@ import IslandDoom from "./island_doom";
 import IslandIreland from "./island_ireland";
 import { distancePointToSegment } from "../utils/geometry";
 import { Rocket } from "../rockets/rocket";
+import IslandSkull from "./island_skull";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -17,7 +18,8 @@ export default class IslandManager {
     const island2 = new IslandDoom(scene, 100, 500);
     const island3 = new IslandIreland(scene, 600, 600);
     const island4 = new IslandCacti(scene, 300, 100);
-    this.islands = [this.mainIsland, island2, island3, island4];
+    const island5 = new IslandSkull(scene, 0, 0);
+    this.islands = [this.mainIsland, island2, island3, island4, island5];
   }
 
   getMainIsland(): Island {
