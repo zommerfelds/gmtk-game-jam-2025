@@ -39,6 +39,7 @@ class MyGame extends Phaser.Scene {
     this.load_sprite("island_cave");
     this.load_sprite("island_doom");
     this.load_sprite("island_ireland");
+    this.load_sprite("island_lake");
     this.load_sprite("island_skull");
     this.load_sprite("effect_explosion", /* skipCollision= */ true);
   }
@@ -168,7 +169,7 @@ const config = {
         isFixed: true,
         fps: TARGET_FRAMERATE,
       },
-      // debug: true, // Uncomment to see physics shapes
+      debug: true, // Uncomment to see physics shapes
     },
   },
   scale: {
