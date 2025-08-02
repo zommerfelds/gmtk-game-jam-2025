@@ -15,6 +15,7 @@ export function preloadAssets(scene: Phaser.Scene) {
     "island_doom",
     "island_ireland",
     "island_lake",
+    "island_sign",
     "island_skull",
   ].forEach(name => loadSprite(scene, name));
 
