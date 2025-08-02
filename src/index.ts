@@ -3,6 +3,7 @@ import PlayerRocket from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocket from "./rockets/recorded_rocket";
 import Text = Phaser.GameObjects.Text;
+import setPolygonBody from "./utils/set_polygon_body";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 60;
@@ -30,6 +31,10 @@ class MyGame extends Phaser.Scene {
       "sprite_island_ireland.png",
       "sprite_island_ireland.json"
     );
+    this.load.json(
+      "island_ireland_collision",
+      "sprite_island_ireland-collision.json"
+    );
   }
 
   create() {
@@ -43,12 +48,11 @@ class MyGame extends Phaser.Scene {
       CYCLE_STEPS
     );
 
-    const island = this.matter.add.sprite(400, 380, "island_ireland");
+    const island = this.matter.add.sprite(400, 400, "island_ireland");
     this.anims.createFromAseprite("island_ireland", undefined, island);
     island.play({ key: "Idle", repeat: -1 });
-    island.setRectangle(island.width * 0.8, island.height * 0.3);
-    island.setOrigin(0.5, 0.7);
-    island.setStatic(true);
+    const islandCollision = this.cache.json.get("island_ireland_collision");
+    setPolygonBody(island, islandCollision);
   }
 
   update() {
@@ -59,13 +63,13 @@ class MyGame extends Phaser.Scene {
       const yAxis = this.cursors.up?.isDown
         ? 1.0
         : this.cursors.down?.isDown
-          ? -1.0
-          : 0;
+        ? -1.0
+        : 0;
       const xAxis = this.cursors.right?.isDown
         ? 1.0
         : this.cursors.left?.isDown
-          ? -1.0
-          : 0;
+        ? -1.0
+        : 0;
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
       this.cycleWhenRecordingStarted = this.currentCycleStep;
@@ -88,11 +92,11 @@ class MyGame extends Phaser.Scene {
       ).toFixed(1)}/${CYCLE_SECONDS}`
     );
     this.recordingText.setText(
-      this.playerRocket ?
-        `Recording (started at ${(
-          this.cycleWhenRecordingStarted / TARGET_FRAMERATE
-        ).toFixed(1)})` :
-        `Press space to spawn another rocket.`
+      this.playerRocket
+        ? `Recording (started at ${(
+            this.cycleWhenRecordingStarted / TARGET_FRAMERATE
+          ).toFixed(1)})`
+        : `Press space to spawn another rocket.`
     );
   }
 }
