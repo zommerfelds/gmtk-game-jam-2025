@@ -6,7 +6,7 @@ import Vector2 = Phaser.Math.Vector2;
 import RecordedRocket from "./recorded_rocket";
 import Camera = Phaser.Cameras.Scene2D.Camera;
 
-export default class PlayerRocket implements Landable {
+export default class PlayerRocketController implements Landable {
   private rocket: Rocket;
   private recordedInputs: RecordedInput[];
   private mainCamera: Camera;

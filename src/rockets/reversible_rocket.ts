@@ -12,6 +12,7 @@ const MAX_BACKWARDS_ACCELERATION = 0.00025;
 export default class ReversibleRocket implements Rocket {
   private sprite: Phaser.Physics.Matter.Sprite;
   private footLocal = new Phaser.Math.Vector2(0, 0);
+  private idle = true;
 
   constructor(scene: Phaser.Scene, initialX: number, initialY: number) {
     this.sprite = scene.matter.add.sprite(initialX, initialY, "rocket");
@@ -41,6 +42,7 @@ export default class ReversibleRocket implements Rocket {
 
   public applyInput(x: number, y: number) {
     const torqueInput = x;
+    this.idle = x === 0 && y === 0;
     const accelerationInput = y;
 
     // Calculate torque and force.
@@ -90,6 +92,10 @@ export default class ReversibleRocket implements Rocket {
     const linearSpeed = body.speed ?? 0;
     const angularSpeed = Math.abs(body.angularVelocity ?? 0);
     return linearSpeed < 0.01 && angularSpeed < 0.01;
+  }
+
+  public isIdle(): boolean {
+    return this.idle;
   }
 
   followWithCamera(camera: Phaser.Cameras.Scene2D.Camera) {

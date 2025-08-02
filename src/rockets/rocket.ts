@@ -33,4 +33,6 @@ export interface Rocket extends Landable {
   getFootPosition(): Vector2;
   /** Returns true if the rocket's linear and angular velocity are near zero. */
   isStationary(): boolean;
+  /** Returns true if no player input occurred this frame. */
+  isIdle(): boolean;
 }
