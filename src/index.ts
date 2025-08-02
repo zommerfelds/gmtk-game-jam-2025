@@ -99,6 +99,15 @@ class MyGame extends Phaser.Scene {
       this.cursors.space?.isDown ||
       (pad ? pad.buttons.length > 0 && pad.buttons[0].pressed : false);
 
+    // After the physics simulation we need to snap as the first thing. Otherwise the recording
+    // check will be off.
+    this.recordedRockets.forEach(recordedRocket => {
+      this.islandManager.checkLandingStatus(recordedRocket.getRocket(), FIXED_DT_MS);
+    });
+    if (this.playerRocketController) {
+      this.islandManager.checkLandingStatus(this.playerRocketController.getRocket(), FIXED_DT_MS);
+    }
+
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
       if (this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0) {
         this.playerRocketController.getRocket().explode();
@@ -154,12 +163,7 @@ class MyGame extends Phaser.Scene {
 
     this.recordedRockets.forEach(recordedRocket => {
       recordedRocket.applyNextRecordedInput();
-      this.islandManager.checkLandingStatus(recordedRocket.getRocket(), FIXED_DT_MS);
     });
-
-    if (this.playerRocketController) {
-      this.islandManager.checkLandingStatus(this.playerRocketController.getRocket(), FIXED_DT_MS);
-    }
 
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;
