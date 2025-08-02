@@ -38,12 +38,14 @@ class MyGame extends Phaser.Scene {
     this.load_sprite("island_doom");
     this.load_sprite("island_ireland");
     this.load_sprite("island_skull");
-    this.load_sprite("effect_explosion");
+    this.load_sprite("effect_explosion", /* skipCollision= */ true);
   }
 
-  load_sprite(name: string) {
+  load_sprite(name: string, skipCollision: boolean = false) {
     this.load.aseprite(name, `sprite_${name}.png`, `sprite_${name}.json`);
-    this.load.json(`${name}_collision`, `sprite_${name}-collision.json`);
+    if (!skipCollision) {
+      this.load.json(`${name}_collision`, `sprite_${name}-collision.json`);
+    }
   }
 
   create() {
