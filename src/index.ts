@@ -6,7 +6,7 @@ import Text = Phaser.GameObjects.Text;
 import { setPolygonBody, getLandingLine } from "./utils/polygon_body";
 
 const TARGET_FRAMERATE = 60;
-const CYCLE_SECONDS = 60;
+const CYCLE_SECONDS = 30;
 
 const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 
