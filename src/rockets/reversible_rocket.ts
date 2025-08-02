@@ -72,7 +72,7 @@ export default class ReversibleRocket implements Rocket {
             this.sprite.destroy(true);
 
             // Play explosion animation.
-            const explosion= scene.add.sprite(positionX, positionY, "effect_explosion");
+            const explosion = scene.add.sprite(positionX, positionY, "effect_explosion");
             scene.anims.createFromAseprite("effect_explosion", undefined, explosion);
             explosion.play({ key: "Idle", repeat: 0 }, true);
             setTimeout(() => {
@@ -143,7 +143,7 @@ export default class ReversibleRocket implements Rocket {
     if (!body) return false;
     const linearSpeed = body.speed ?? 0;
     const angularSpeed = Math.abs(body.angularVelocity ?? 0);
-    return linearSpeed < 0.01 && angularSpeed < 0.01;
+    return linearSpeed < 0.05 && angularSpeed < 0.05;
   }
 
   public isIdle(): boolean {

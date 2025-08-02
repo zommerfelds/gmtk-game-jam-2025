@@ -25,7 +25,7 @@ export default class IslandManager {
   }
 
   checkLandingStatus(rocket: Rocket, _deltaMs: number) {
-    const TOLERANCE = 2;
+    const TOLERANCE = 3;
     const footPos = rocket.getFootPosition();
 
     // Determine current island under rocket.
