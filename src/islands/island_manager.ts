@@ -8,7 +8,6 @@ import { distancePointToSegment } from "../utils/geometry";
 import { Rocket } from "../rockets/rocket";
 import IslandSkull from "./island_skull";
 import IslandCave from "./island_cave";
-import IslandLake from "./island_lake";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -44,7 +43,7 @@ export default class IslandManager {
       new IslandCacti(scene, 300, 100),
       new IslandSkull(scene, 0, 0),
       new IslandCave(scene, 700, 300),
-      new IslandLake(scene, 1400, 200),
+      new Island(scene, 1400, 200, "island_lake"),
       ...spawnerIslands,
     ];
   }
