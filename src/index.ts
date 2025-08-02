@@ -4,7 +4,7 @@ import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocketController from "./rockets/recorded_rocket";
 import IslandManager from "./islands/island_manager";
 import Text = Phaser.GameObjects.Text;
-import {Rocket} from "./rockets/rocket";
+import { Rocket } from "./rockets/rocket";
 import Vector2Like = Phaser.Types.Math.Vector2Like;
 
 const TARGET_FRAMERATE = 60;
@@ -33,6 +33,7 @@ class MyGame extends Phaser.Scene {
     this.load.path = "assets/";
     this.load_sprite("rocket");
     this.load_sprite("island_cacti");
+    this.load_sprite("island_cave");
     this.load_sprite("island_doom");
     this.load_sprite("island_ireland");
     this.load_sprite("island_skull");

@@ -7,6 +7,7 @@ import IslandIreland from "./island_ireland";
 import { distancePointToSegment } from "../utils/geometry";
 import { Rocket } from "../rockets/rocket";
 import IslandSkull from "./island_skull";
+import IslandCave from "./island_cave";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -17,7 +18,8 @@ export default class IslandManager {
     const island3 = new IslandIreland(scene, 600, 600);
     const island4 = new IslandCacti(scene, 300, 100);
     const island5 = new IslandSkull(scene, 0, 0);
-    this.islands = [this.mainIsland, island2, island3, island4, island5];
+    const island6 = new IslandCave(scene, 700, 300);
+    this.islands = [this.mainIsland, island2, island3, island4, island5, island6];
   }
 
   getMainIsland(): Island {
@@ -25,7 +27,7 @@ export default class IslandManager {
   }
 
   checkLandingStatus(rocket: Rocket, _deltaMs: number) {
-    const TOLERANCE = 2;
+    const TOLERANCE = 3;
     const footPos = rocket.getFootPosition();
 
     // Determine current island under rocket.
