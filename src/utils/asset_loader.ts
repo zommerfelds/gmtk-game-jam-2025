@@ -8,6 +8,7 @@ function loadSprite(scene: Phaser.Scene, name: string, skipCollision = false) {
 export function preloadAssets(scene: Phaser.Scene) {
   scene.load.path = "assets/";
 
+  // Physical sprites:
   [
     "rocket",
     "island_cacti",
@@ -19,5 +20,6 @@ export function preloadAssets(scene: Phaser.Scene) {
     "island_skull",
   ].forEach(name => loadSprite(scene, name));
 
+  // Decoration sprites:
   ["effect_explosion", "icon_cactus", "icon_lava"].forEach(name => loadSprite(scene, name, true));
 }
