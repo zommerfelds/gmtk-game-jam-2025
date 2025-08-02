@@ -42,7 +42,8 @@ class MyGame extends Phaser.Scene {
     this.load_sprite("island_lake");
     this.load_sprite("island_skull");
     this.load_sprite("effect_explosion", /* skipCollision= */ true);
-    this.load_sprite("icon_cactus");
+    this.load_sprite("icon_cactus", /* skipCollision= */ true);
+    this.load_sprite("icon_lava", /* skipCollision= */ true);
   }
 
   load_sprite(name: string, skipCollision: boolean = false) {

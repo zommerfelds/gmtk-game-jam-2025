@@ -12,5 +12,6 @@ export default class IslandSkull extends Island {
   interactWithRocket(rocket: Rocket) {
     super.interactWithRocket(rocket);
     rocket.tryTakeGood(GoodsType.CACTUS);
+    rocket.tryTakeGood(GoodsType.LAVA);
   }
 }

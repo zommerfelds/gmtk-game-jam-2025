@@ -119,6 +119,7 @@ export default class ReversibleRocket implements Rocket {
 
     if (this.goodsSprite) {
       this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
+      this.goodsSprite.setRotation(this.sprite.rotation);
     }
   }
 
@@ -137,6 +138,7 @@ export default class ReversibleRocket implements Rocket {
     }
     this.loadedGood = good;
     this.goodsSprite = this.scene.add.sprite(this.sprite.x, this.sprite.y, good);
+    this.goodsSprite.setOrigin(0.5, 0.8);
     return true;
   }
 
