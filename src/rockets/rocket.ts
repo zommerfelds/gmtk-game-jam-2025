@@ -31,4 +31,6 @@ export interface Rocket extends Landable {
   followWithCamera(camera: Camera): void;
   /** Returns foot position (lowest point) of the rocket. */
   getFootPosition(): Vector2;
+  /** Returns true if the rocket's linear and angular velocity are near zero. */
+  isStationary(): boolean;
 }

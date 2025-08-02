@@ -2,13 +2,13 @@ import "phaser";
 import PlayerRocket from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocket from "./rockets/recorded_rocket";
-import { distancePointToSegment } from "./utils/geometry";
+import IslandManager from "./islands/island_manager";
 import Text = Phaser.GameObjects.Text;
-import { setPolygonBody, getLandingLine } from "./utils/polygon_body";
 import {Rocket} from "./rockets/rocket";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 30;
+const FIXED_DT_MS = 1000 / TARGET_FRAMERATE;
 
 const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 
@@ -20,9 +20,7 @@ class MyGame extends Phaser.Scene {
   private cycleText: Text;
   private cycleWhenRecordingStarted = 0;
   private recordingText: Text;
-  private landingStatusText: Text;
-  private landingLine: Phaser.Math.Vector2[];
-  private rocketFootPoint: Phaser.GameObjects.Arc;
+  private islandManager: IslandManager;
 
   constructor() {
     super();
@@ -30,37 +28,22 @@ class MyGame extends Phaser.Scene {
 
   preload() {
     this.load.path = "assets/";
-    this.load.aseprite("rocket", "sprite_rocket.png", "sprite_rocket.json");
-    this.load.json("rocket_collision", "sprite_rocket-collision.json");
-    this.load.aseprite("island_ireland", "sprite_island_ireland.png", "sprite_island_ireland.json");
-    this.load.json("island_ireland_collision", "sprite_island_ireland-collision.json");
+    this.load_sprite("rocket");
+    this.load_sprite("island_cacti");
+    this.load_sprite("island_doom");
+    this.load_sprite("island_ireland");
+  }
+
+  load_sprite(name: string) {
+    this.load.aseprite(name, `sprite_${name}.png`, `sprite_${name}.json`);
+    this.load.json(`${name}_collision`, `sprite_${name}-collision.json`);
   }
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-
-    const island = this.matter.add.sprite(400, 400, "island_ireland");
-    this.anims.createFromAseprite("island_ireland", undefined, island);
-    island.play({ key: "Idle", repeat: -1 });
-    const islandCollision = this.cache.json.get("island_ireland_collision");
-    setPolygonBody(island, islandCollision);
-    island.setStatic(true);
-    const landingLineRaw = getLandingLine(islandCollision);
-    this.landingLine = landingLineRaw.map(
-      l =>
-        new Phaser.Math.Vector2(
-          l.x + island.x - island.width * island.originX,
-          l.y + island.y - island.height * island.originY,
-        ),
-    );
+    this.islandManager = new IslandManager(this);
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
-    this.landingStatusText = this.add.text(5, 30, "").setScrollFactor(0);
-
-    // Temp: draw spawn point and rocket foot. Romve once no longer needed.
-    this.add.circle(this.landingLine[0].x, this.landingLine[0].y, 5, 0x0000ff, 1);
-    this.add.circle(this.landingLine[1].x, this.landingLine[1].y, 5, 0x0000ff, 1);
-    this.rocketFootPoint = this.add.circle();
   }
 
   update() {
@@ -72,29 +55,24 @@ class MyGame extends Phaser.Scene {
       const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
-      this.cycleWhenRecordingStarted = this.currentCycleStep;
-      const spawnPoint = this.getSpawnPoint();
+      const spawnPoint = this.islandManager.getMainIsland().getSpawnPoint();
+      console.log("Spawn point: " + spawnPoint.x + " " + spawnPoint.y);
       this.playerRocket = new PlayerRocket(
         new ReversibleRocket(this, spawnPoint.x, spawnPoint.y, this.onRocketDestroyed.bind(this)),
         this.cameras.main,
         CYCLE_STEPS,
       );
-    }
-
-    if (this.playerRocket && this.landingLine) {
-      const pos = this.playerRocket.getFootPosition();
-      this.rocketFootPoint.setPosition(pos.x, pos.y);
-      const distance = distancePointToSegment(pos, this.landingLine[0], this.landingLine[1]);
-      this.landingStatusText?.setText(
-        distance < 3 ? "Landing status: The Eagle has landed" : "Landing status: outer space",
-      );
-    } else {
-      this.landingStatusText?.setText("Landing status: outer space");
+      this.cycleWhenRecordingStarted = this.currentCycleStep;
     }
 
     this.recordedRockets.forEach(recordedRocket => {
       recordedRocket.applyNextRecordedInput();
+      this.islandManager.checkLandingStatus(recordedRocket.getRocket(), FIXED_DT_MS);
     });
+
+    if (this.playerRocket) {
+      this.islandManager.checkLandingStatus(this.playerRocket.getRocket(), FIXED_DT_MS);
+    }
 
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;
@@ -108,10 +86,6 @@ class MyGame extends Phaser.Scene {
         ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
         : `Press space to spawn a rocket`,
     );
-  }
-
-  private getSpawnPoint(): Phaser.Math.Vector2 {
-    return this.landingLine[0].clone().add(this.landingLine[1]).scale(0.5);
   }
 
   private onRocketDestroyed(rocket: Rocket) {
