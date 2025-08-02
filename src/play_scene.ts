@@ -34,7 +34,7 @@ export default class PlayScene extends Phaser.Scene {
     this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
     const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
     this.cameras.main.centerOn(spawn.x, spawn.y);
-    this.ui = new GameUI(this, CYCLE_SECONDS, TARGET_FRAMERATE);
+    this.ui = new GameUI(this);
   }
 
   update() {
