@@ -4,7 +4,7 @@ import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocketController from "./rockets/recorded_rocket";
 import IslandManager from "./islands/island_manager";
 import Text = Phaser.GameObjects.Text;
-import {Rocket} from "./rockets/rocket";
+import { Rocket } from "./rockets/rocket";
 import Vector2Like = Phaser.Types.Math.Vector2Like;
 
 const TARGET_FRAMERATE = 60;
@@ -23,7 +23,8 @@ class MyGame extends Phaser.Scene {
   private recordingText: Text;
   private returnToStartText: Text;
   private islandManager: IslandManager;
-  private spawnPoint?: Vector2Like = null;
+  private lastSpawnPoint?: Vector2Like = null;
+  private allowCameraMovement = false;
 
   constructor() {
     super();
@@ -53,8 +54,11 @@ class MyGame extends Phaser.Scene {
   }
 
   update() {
+    const yAxis = this.cursors.up?.isDown ? 1.0 : this.cursors.down?.isDown ? -1.0 : 0;
+    const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
+
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
-      if (this.playerRocketController.getFootPosition().distance(this.spawnPoint) != 0) {
+      if (this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0) {
         this.playerRocketController.getRocket().explode(this, () => {
           this.cameras.main.stopFollow();
         });
@@ -62,20 +66,38 @@ class MyGame extends Phaser.Scene {
         this.recordedRockets.push(this.playerRocketController.finishRecording());
       }
       this.playerRocketController = null;
-      this.spawnPoint = null;
+      this.allowCameraMovement = false;
+      this.lastSpawnPoint = null;
     } else if (this.playerRocketController) {
-      const yAxis = this.cursors.up?.isDown ? 1.0 : this.cursors.down?.isDown ? -1.0 : 0;
-      const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
       this.playerRocketController.applyInput(xAxis, yAxis);
-    } else if (this.cursors.space?.isDown) {
-      this.spawnPoint = this.islandManager.getMainIsland().getSpawnPoint();
-      console.log("Spawn point: " + this.spawnPoint.x + " " + this.spawnPoint.y);
-      this.playerRocketController = new PlayerRocketController(
-        new ReversibleRocket(this, this.spawnPoint.x, this.spawnPoint.y, this.onRocketDestroyed.bind(this)),
-        this.cameras.main,
-        CYCLE_STEPS,
-      );
-      this.cycleWhenRecordingStarted = this.currentCycleStep;
+    } else {
+      if (!this.allowCameraMovement) {
+        if (xAxis === 0 && yAxis === 0) {
+          this.allowCameraMovement = true;
+        }
+      } else if (xAxis !== 0 || yAxis !== 0) {
+        const cam = this.cameras.main;
+        if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
+        const CAMERA_SCROLL_SPEED = 10;
+        cam.scrollX += xAxis * CAMERA_SCROLL_SPEED;
+        cam.scrollY -= yAxis * CAMERA_SCROLL_SPEED;
+      }
+
+      if (this.cursors.space?.isDown) {
+        this.lastSpawnPoint = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
+        console.log("Spawn point: " + this.lastSpawnPoint.x + " " + this.lastSpawnPoint.y);
+        this.playerRocketController = new PlayerRocketController(
+          new ReversibleRocket(
+            this,
+            this.lastSpawnPoint.x,
+            this.lastSpawnPoint.y,
+            this.onRocketDestroyed.bind(this),
+          ),
+          this.cameras.main,
+          CYCLE_STEPS,
+        );
+        this.cycleWhenRecordingStarted = this.currentCycleStep;
+      }
     }
 
     this.recordedRockets.forEach(recordedRocket => {
@@ -101,17 +123,20 @@ class MyGame extends Phaser.Scene {
     );
     this.returnToStartText.setText(
       this.playerRocketController
-        ? (this.playerRocketController.getFootPosition().distance(this.spawnPoint) != 0
+        ? this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0
           ? "Return to start before the loop ends!"
-          : "All good, you're back at the start :)")
-        : ""
+          : "All good, you're back at the start :)"
+        : "",
     );
   }
 
   private onRocketDestroyed(rocket: Rocket) {
     if (rocket == this.playerRocketController?.getRocket()) {
       this.cameras.main.stopFollow();
+      const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
+      this.cameras.main.pan(spawn.x, spawn.y, 1000, "Sine.easeInOut");
       this.playerRocketController = null;
+      this.allowCameraMovement = false;
     }
     this.recordedRockets = this.recordedRockets.filter(el => el.getRocket() != rocket);
   }
