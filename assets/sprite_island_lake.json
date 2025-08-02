@@ -145,8 +145,8 @@
    { "name": "Flattened", "opacity": 255, "blendMode": "normal" },
    { "name": "Layer 3", "opacity": 255, "blendMode": "normal" },
    { "name": "Platform", "opacity": 255, "blendMode": "normal" },
-   { "name": "Layer 5", "opacity": 255, "blendMode": "normal" },
-   { "name": "Layer 6", "opacity": 255, "blendMode": "normal" }
+   { "name": "Layer 6", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 5", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [
   ]
