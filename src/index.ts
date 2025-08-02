@@ -2,6 +2,7 @@ import "phaser";
 import PlayerRocket from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocket from "./rockets/recorded_rocket";
+import { distancePointToSegment } from "./utils/geometry";
 import Text = Phaser.GameObjects.Text;
 import { setPolygonBody, getLandingLine } from "./utils/polygon_body";
 
@@ -18,8 +19,9 @@ class MyGame extends Phaser.Scene {
   private cycleText: Text;
   private cycleWhenRecordingStarted = 0;
   private recordingText: Text;
-  private spawnPoint?: Phaser.Math.Vector2;
-  private lowestPoint?: Phaser.GameObjects.Arc;
+  private landingStatusText: Text;
+  private landingLine: Phaser.Math.Vector2[];
+  private rocketFootPoint: Phaser.GameObjects.Arc;
 
   constructor() {
     super();
@@ -48,18 +50,22 @@ class MyGame extends Phaser.Scene {
     const islandCollision = this.cache.json.get("island_ireland_collision");
     setPolygonBody(island, islandCollision);
     island.setStatic(true);
-    const landingLine = getLandingLine(islandCollision);
-    const spawn = landingLine[0].add(landingLine[1]).scale(0.5);
-    this.spawnPoint = new Phaser.Math.Vector2(
-      spawn.x + island.x - island.width * island.originX,
-      spawn.y + island.y - island.height * island.originY,
+    const landingLineRaw = getLandingLine(islandCollision);
+    this.landingLine = landingLineRaw.map(
+      l =>
+        new Phaser.Math.Vector2(
+          l.x + island.x - island.width * island.originX,
+          l.y + island.y - island.height * island.originY,
+        ),
     );
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
+    this.landingStatusText = this.add.text(5, 30, "").setScrollFactor(0);
 
-    // Tmp: draw spawn point and rocket foot. Romve once no longer needed.
-    this.add.circle(this.spawnPoint.x, this.spawnPoint.y, 5, 0x0000ff, 1);
-    this.lowestPoint = this.add.circle(this.spawnPoint.x, this.spawnPoint.y, 5, 0x00ffff, 1);
+    // Temp: draw spawn point and rocket foot. Romve once no longer needed.
+    this.add.circle(this.landingLine[0].x, this.landingLine[0].y, 5, 0x0000ff, 1);
+    this.add.circle(this.landingLine[1].x, this.landingLine[1].y, 5, 0x0000ff, 1);
+    this.rocketFootPoint = this.add.circle();
   }
 
   update() {
@@ -79,16 +85,15 @@ class MyGame extends Phaser.Scene {
       );
     }
 
-    if (this.playerRocket && this.spawnPoint) {
+    if (this.playerRocket && this.landingLine) {
       const pos = this.playerRocket.getFootPosition();
-      this.lowestPoint.setPosition(pos.x, pos.y);
-      const distance = Phaser.Math.Distance.Between(
-        this.spawnPoint.x,
-        this.spawnPoint.y,
-        pos.x,
-        pos.y,
+      this.rocketFootPoint.setPosition(pos.x, pos.y);
+      const distance = distancePointToSegment(pos, this.landingLine[0], this.landingLine[1]);
+      this.landingStatusText?.setText(
+        distance < 3 ? "Landing status: The Eagle has landed" : "Landing status: outer space",
       );
-      console.log("distance", distance);
+    } else {
+      this.landingStatusText?.setText("Landing status: outer space");
     }
 
     this.recordedRockets.forEach(recordedRocket => {
