@@ -7,7 +7,7 @@ import Text = Phaser.GameObjects.Text;
 import { setPolygonBody, getLandingLine } from "./utils/polygon_body";
 
 const TARGET_FRAMERATE = 60;
-const CYCLE_SECONDS = 60;
+const CYCLE_SECONDS = 30;
 
 const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 
@@ -37,12 +37,6 @@ class MyGame extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-
-    this.playerRocket = new PlayerRocket(
-      new ReversibleRocket(this, 400, 300),
-      this.cameras.main,
-      CYCLE_STEPS,
-    );
 
     const island = this.matter.add.sprite(400, 400, "island_ireland");
     this.anims.createFromAseprite("island_ireland", undefined, island);
@@ -79,7 +73,7 @@ class MyGame extends Phaser.Scene {
     } else if (this.cursors.space?.isDown) {
       this.cycleWhenRecordingStarted = this.currentCycleStep;
       this.playerRocket = new PlayerRocket(
-        new ReversibleRocket(this, 400, 300),
+        new ReversibleRocket(this, this.spawnPoint.x, this.spawnPoint.y),
         this.cameras.main,
         CYCLE_STEPS,
       );
@@ -110,7 +104,7 @@ class MyGame extends Phaser.Scene {
     this.recordingText.setText(
       this.playerRocket
         ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
-        : `Press space to spawn another rocket.`,
+        : `Press space to spawn a rocket`,
     );
   }
 }
