@@ -40,4 +40,23 @@ export default class Island {
     console.log("Just landed!");
     // Do nothing by default. This should be overwritten by specific islands.
   }
+
+  getDescriptionToBeHappy(): string {
+    // Should be overwritten by specific island.
+    return "";
+  }
+
+  isGoalToBeHappy(): boolean {
+    // Defaults to false, overwrite by specific island.
+    return false;
+  }
+
+  processCycleStep(): void {
+    // Do nothing, overwrite by specific island.
+  }
+
+  isHappy(): boolean {
+    // Defaults to false, overwrite by specific island.
+    return false;
+  }
 }
