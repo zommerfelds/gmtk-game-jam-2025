@@ -1,7 +1,7 @@
 import "phaser";
 import RecordedInput from "./recorded_input";
 import Landable from "../game_objects/Landable";
-import {Rocket, RocketControlType} from "./rocket";
+import { Rocket, RocketControlType } from "./rocket";
 import Vector2 = Phaser.Math.Vector2;
 import RecordedRocket from "./recorded_rocket";
 import Camera = Phaser.Cameras.Scene2D.Camera;
@@ -54,5 +54,4 @@ export default class PlayerRocket implements Landable {
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
     this.rocket.finalizeLanding(finalPosition, finalRotation);
   }
-
 }

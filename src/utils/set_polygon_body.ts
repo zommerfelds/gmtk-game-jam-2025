@@ -1,3 +1,5 @@
+// Use this tool to create shape JSONs: https://gemini.google.com/share/713af5bc71c2
+
 export default function setPolygonBody(
   sprite: Phaser.Physics.Matter.Image | Phaser.Physics.Matter.Sprite,
   collisionJson: any

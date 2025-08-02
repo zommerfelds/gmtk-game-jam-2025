@@ -12,7 +12,6 @@ export enum RocketControlType {
 }
 
 export interface Rocket extends Landable {
-
   getRocketControlType(): RocketControlType;
 
   /**

@@ -115,7 +115,7 @@ const config = {
         isFixed: true,
         fps: TARGET_FRAMERATE,
       },
-      // debug: true, // Uncomment to see physics shapes
+      debug: true, // Uncomment to see physics shapes
     },
   },
   scale: {
