@@ -25,11 +25,11 @@ export default class RecordedRocketController implements Landable {
     this.rocket.finalizeLanding(finalPosition, finalRotation);
   }
 
-  public getRocket(): Rocket {
-    return this.rocket;
+  public isLanded(): boolean {
+    return this.rocket.isLanded();
   }
 
-  public isIdle(): boolean {
-    return false;
+  public getRocket(): Rocket {
+    return this.rocket;
   }
 }

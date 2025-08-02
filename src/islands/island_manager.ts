@@ -41,8 +41,10 @@ export default class IslandManager {
     }
 
     if (landedIsland && rocket.isStationary() && rocket.isIdle()) {
+      if (!rocket.isLanded()) {
+        landedIsland.interactWithRocket(rocket);
+      }
       this.snapToIsland(rocket, landedIsland);
-      landedIsland.interactWithRocket(rocket);
     }
   }
 

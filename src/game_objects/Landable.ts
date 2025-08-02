@@ -9,4 +9,7 @@ export default interface Landable {
    * @param {number} finalRotation The final rotation of the rocket.
    */
   finalizeLanding(finalPosition: Vector2, finalRotation: number): void;
+
+  /** Returns true if this object is currently landed. */
+  isLanded(): boolean;
 }

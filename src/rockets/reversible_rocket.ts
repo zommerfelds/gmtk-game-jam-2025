@@ -16,6 +16,7 @@ export default class ReversibleRocket implements Rocket {
   private readonly footLocal: Vector2;
   private readonly scene: Phaser.Scene;
 
+  private landed = false;
   private idle = true;
   private isDestroyed = false;
   private linearVelocityAbs: number = 0;
@@ -85,6 +86,9 @@ export default class ReversibleRocket implements Rocket {
   public applyInput(x: number, y: number) {
     const torqueInput = x;
     this.idle = x === 0 && y === 0;
+    if (!this.idle) {
+      this.landed = false;
+    }
     const accelerationInput = y;
 
     this.linearVelocityAbs = new Vector2(this.sprite.getVelocity()).length();
@@ -119,6 +123,7 @@ export default class ReversibleRocket implements Rocket {
     this.sprite.setRotation(finalRotation);
     this.sprite.setVelocity(0, 0);
     this.sprite.setAngularVelocity(0);
+    this.landed = true;
     console.log("Landed!");
   }
 
@@ -174,6 +179,10 @@ export default class ReversibleRocket implements Rocket {
 
   public isIdle(): boolean {
     return this.idle;
+  }
+
+  public isLanded(): boolean {
+    return this.landed;
   }
 
   followWithCamera(camera: Phaser.Cameras.Scene2D.Camera) {

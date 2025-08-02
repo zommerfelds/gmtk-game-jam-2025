@@ -11,6 +11,7 @@ export default class PlayerRocketController implements Landable {
   private recordedInputs: RecordedInput[];
   private mainCamera: Camera;
   private cycleSteps: number;
+  private isLanded_ = false;
 
   constructor(rocket: Rocket, mainCamera: Camera, cycleSteps: number) {
     this.rocket = rocket;
@@ -57,6 +58,10 @@ export default class PlayerRocketController implements Landable {
 
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
     this.rocket.finalizeLanding(finalPosition, finalRotation);
+  }
+
+  public isLanded(): boolean {
+    return this.rocket.isLanded();
   }
 
   public getFootPosition(): Vector2 {

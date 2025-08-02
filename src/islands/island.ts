@@ -37,6 +37,7 @@ export default class Island {
   }
 
   interactWithRocket(rocket: Rocket) {
+    console.log("Just landed!");
     // Do nothing by default. This should be overwritten by specific islands.
   }
 }
