@@ -26,6 +26,7 @@ class MyGame extends Phaser.Scene {
   preload() {
     this.load.path = "assets/";
     this.load.aseprite("rocket", "sprite_rocket.png", "sprite_rocket.json");
+    this.load.json("rocket_collision", "sprite_rocket-collision.json");
     this.load.aseprite(
       "island_ireland",
       "sprite_island_ireland.png",
@@ -43,7 +44,7 @@ class MyGame extends Phaser.Scene {
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
 
     this.playerRocket = new PlayerRocket(
-      new ReversibleRocket(this.matter, this.anims, 400, 300),
+      new ReversibleRocket(this, 400, 300),
       this.cameras.main,
       CYCLE_STEPS
     );
@@ -53,6 +54,7 @@ class MyGame extends Phaser.Scene {
     island.play({ key: "Idle", repeat: -1 });
     const islandCollision = this.cache.json.get("island_ireland_collision");
     setPolygonBody(island, islandCollision);
+    island.setStatic(true);
   }
 
   update() {
@@ -74,7 +76,7 @@ class MyGame extends Phaser.Scene {
     } else if (this.cursors.space?.isDown) {
       this.cycleWhenRecordingStarted = this.currentCycleStep;
       this.playerRocket = new PlayerRocket(
-        new ReversibleRocket(this.matter, this.anims, 400, 300),
+        new ReversibleRocket(this, 400, 300),
         this.cameras.main,
         CYCLE_STEPS
       );

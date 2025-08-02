@@ -1,7 +1,5 @@
 export default function setPolygonBody(
-  sprite: Phaser.Physics.Matter.Components.SetBody &
-    Phaser.Physics.Matter.Components.Static &
-    Phaser.Physics.Matter.Components.Transform,
+  sprite: Phaser.Physics.Matter.Image | Phaser.Physics.Matter.Sprite,
   collisionJson: any
 ) {
   if (!collisionJson?.polygons) return;
@@ -17,20 +15,12 @@ export default function setPolygonBody(
   const parts: any[] = [];
 
   polygons.forEach((poly) => {
-    const part = Bodies.fromVertices(
-      sprite.x,
-      sprite.y,
-      poly.points,
-      { isStatic: true },
-      true
-    );
+    const part = Bodies.fromVertices(sprite.x, sprite.y, poly.points, {}, true);
     if (part) parts.push(part);
   });
 
   if (!parts.length) return;
 
-  const body =
-    parts.length === 1 ? parts[0] : Body.create({ parts, isStatic: true });
+  const body = parts.length === 1 ? parts[0] : Body.create({ parts });
   sprite.setExistingBody(body);
-  sprite.setStatic(true);
 }
