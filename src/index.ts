@@ -23,7 +23,7 @@ class MyGame extends Phaser.Scene {
   private landingStatusText: Text;
   private landingLine: Phaser.Math.Vector2[];
   private rocketFootPoint: Phaser.GameObjects.Arc;
-  private mainIsland: Island
+  private mainIsland: Island;
 
   constructor() {
     super();
@@ -31,8 +31,8 @@ class MyGame extends Phaser.Scene {
 
   preload() {
     this.load.path = "assets/";
-    this.load_sprite("rocket")
-    this.load_sprite("island_ireland")
+    this.load_sprite("rocket");
+    this.load_sprite("island_ireland");
   }
 
   load_sprite(name: string) {
@@ -40,19 +40,17 @@ class MyGame extends Phaser.Scene {
     this.load.json(`${name}_collision`, `sprite_${name}-collision.json`);
   }
 
-
-
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.mainIsland = new IslandIreland(this, 400, 400)
+    this.mainIsland = new IslandIreland(this, 400, 400);
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
     this.landingStatusText = this.add.text(5, 30, "").setScrollFactor(0);
 
     // Temp: draw spawn point and rocket foot. Romve once no longer needed.
-    var landingLine = this.mainIsland.getLandingLine()
-    this.add.circle(landingLine[0].x, landingLine[0].y, 5, 0x0000ff, 1);
-    this.add.circle(landingLine[1].x, landingLine[1].y, 5, 0x0000ff, 1);
+    this.landingLine = this.mainIsland.getLandingLine();
+    this.add.circle(this.landingLine[0].x, this.landingLine[0].y, 5, 0x0000ff, 1);
+    this.add.circle(this.landingLine[1].x, this.landingLine[1].y, 5, 0x0000ff, 1);
     this.rocketFootPoint = this.add.circle();
   }
 
@@ -66,7 +64,7 @@ class MyGame extends Phaser.Scene {
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
       const spawnPoint = this.mainIsland.getSpawnPoint();
-      console.log("SPawn point: " + spawnPoint.x + " " + spawnPoint.y)
+      console.log("Spawn point: " + spawnPoint.x + " " + spawnPoint.y);
       this.playerRocket = new PlayerRocket(
         new ReversibleRocket(this, spawnPoint.x, spawnPoint.y),
         this.cameras.main,
