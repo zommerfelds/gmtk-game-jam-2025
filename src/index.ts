@@ -16,6 +16,7 @@ const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 class MyGame extends Phaser.Scene {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private playerRocketController?: PlayerRocketController;
+  private tabKey: Phaser.Input.Keyboard.Key;
   private recordedRockets: RecordedRocketController[] = [];
   private currentCycleStep = 0;
   private cycleText: Text;
@@ -38,6 +39,7 @@ class MyGame extends Phaser.Scene {
     this.load_sprite("island_cave");
     this.load_sprite("island_doom");
     this.load_sprite("island_ireland");
+    this.load_sprite("island_lake");
     this.load_sprite("island_skull");
     this.load_sprite("effect_explosion", /* skipCollision= */ true);
     this.load_sprite("icon_cactus");
@@ -52,7 +54,10 @@ class MyGame extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
+    this.tabKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TAB);
     this.islandManager = new IslandManager(this);
+    const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
+    this.cameras.main.centerOn(spawn.x, spawn.y);
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
     this.returnToStartText = this.add.text(5, 35, "").setScrollFactor(0);
@@ -75,6 +80,13 @@ class MyGame extends Phaser.Scene {
     } else if (this.playerRocketController) {
       this.playerRocketController.applyInput(xAxis, yAxis);
     } else {
+      if (Phaser.Input.Keyboard.JustDown(this.tabKey)) {
+        this.islandManager.selectNextSpawnerIsland();
+        const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
+        const cam = this.cameras.main;
+        if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
+        this.cameras.main.pan(spawn.x, spawn.y, 500, "Sine.easeInOut");
+      }
       if (!this.allowCameraMovement) {
         if (xAxis === 0 && yAxis === 0) {
           this.allowCameraMovement = true;
@@ -123,7 +135,7 @@ class MyGame extends Phaser.Scene {
     this.recordingText.setText(
       this.playerRocketController
         ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
-        : `Press space to spawn a rocket`,
+        : `Press space to spawn a rocket\nPress tab to switch spawner`,
     );
     this.returnToStartText.setText(
       this.playerRocketController
@@ -158,7 +170,7 @@ const config = {
         isFixed: true,
         fps: TARGET_FRAMERATE,
       },
-      // debug: true, // Uncomment to see physics shapes
+      debug: true, // Uncomment to see physics shapes
     },
   },
   scale: {

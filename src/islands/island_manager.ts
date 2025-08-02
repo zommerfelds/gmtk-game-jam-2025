@@ -11,23 +11,54 @@ import IslandCave from "./island_cave";
 
 export default class IslandManager {
   private readonly islands: Island[];
-  private readonly spawnerIslands: SpawnerIsland[];
-  private readonly selectedSpawnerIsland: Island;
+  private readonly discoveredSpawnerIslands: Set<SpawnerIsland> = new Set();
+  private readonly undiscoveredSpawnerIslands: Set<SpawnerIsland> = new Set();
+  private selectedSpawnerIsland: SpawnerIsland;
   constructor(scene: Phaser.Scene) {
-    const spawnerA = new SpawnerIsland(scene, 400, 400, true);
-    this.selectedSpawnerIsland = spawnerA;
-    const spawnerB = new SpawnerIsland(scene, 1200, 0, false);
-    this.spawnerIslands = [spawnerA, spawnerB];
+    const onSpawnerDiscovered = (spawner: SpawnerIsland) => {
+      this.discoveredSpawnerIslands.add(spawner);
+      this.undiscoveredSpawnerIslands.delete(spawner);
+    };
+
+    const spawnerIslands: SpawnerIsland[] = [
+      new SpawnerIsland(scene, 400, 400, true, onSpawnerDiscovered),
+      new SpawnerIsland(scene, 1200, 0, false, onSpawnerDiscovered),
+    ];
+
+    for (const sp of spawnerIslands) {
+      if (sp.getIsDiscovered()) {
+        this.discoveredSpawnerIslands.add(sp);
+      } else {
+        this.undiscoveredSpawnerIslands.add(sp);
+      }
+    }
+
+    const firstDiscovered = this.discoveredSpawnerIslands.values().next().value as
+      | SpawnerIsland
+      | undefined;
+    this.selectedSpawnerIsland = firstDiscovered ?? spawnerIslands[0];
+
     this.islands = [
       new IslandDoom(scene, 100, 500),
       new IslandCacti(scene, 300, 100),
       new IslandSkull(scene, 0, 0),
       new IslandCave(scene, 700, 300),
-    ].concat(this.spawnerIslands);
+      new Island(scene, 1400, 200, "island_lake"),
+      ...spawnerIslands,
+    ];
   }
 
-  getSelectedSpawnerIsland(): Island {
+  getSelectedSpawnerIsland(): SpawnerIsland {
     return this.selectedSpawnerIsland;
+  }
+
+  selectNextSpawnerIsland() {
+    const available = Array.from(this.discoveredSpawnerIslands);
+    if (available.length === 0) return;
+
+    const currentIndex = available.indexOf(this.selectedSpawnerIsland);
+    const nextIndex = (currentIndex + 1) % available.length;
+    this.selectedSpawnerIsland = available[nextIndex];
   }
 
   checkLandingStatus(rocket: Rocket, _deltaMs: number) {
