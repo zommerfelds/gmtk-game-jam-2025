@@ -6,6 +6,7 @@ import IslandManager from "./islands/island_manager";
 import Text = Phaser.GameObjects.Text;
 import { Rocket } from "./rockets/rocket";
 import Vector2Like = Phaser.Types.Math.Vector2Like;
+import InputHandler from "./utils/input_handler";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 30;
@@ -14,9 +15,8 @@ const FIXED_DT_MS = 1000 / TARGET_FRAMERATE;
 const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 
 class MyGame extends Phaser.Scene {
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private inputHandler: InputHandler;
   private playerRocketController?: PlayerRocketController;
-  private tabKey: Phaser.Input.Keyboard.Key;
   private recordedRockets: RecordedRocketController[] = [];
   private currentCycleStep = 0;
   private cycleText: Text;
@@ -27,7 +27,6 @@ class MyGame extends Phaser.Scene {
   private islandManager: IslandManager;
   private lastSpawnPoint?: Vector2Like = null;
   private allowCameraMovement = false;
-  private prevRightTriggerPressed = false;
 
   constructor() {
     super();
@@ -55,8 +54,7 @@ class MyGame extends Phaser.Scene {
   }
 
   create() {
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.tabKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TAB);
+    this.inputHandler = new InputHandler(this);
     this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
     const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
     this.cameras.main.centerOn(spawn.x, spawn.y);
@@ -67,39 +65,7 @@ class MyGame extends Phaser.Scene {
   }
 
   update() {
-    const pad = this.input.gamepad?.total ? this.input.gamepad.getPad(0) : null;
-    const joystickThreshold = 0.1;
-
-    let yAxisKeyboard = this.cursors.up?.isDown ? 1.0 : this.cursors.down?.isDown ? -1.0 : 0;
-    let xAxisKeyboard = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
-    let yAxisJoystick = 0;
-    let xAxisJoystick = 0;
-    let triggerAxisGamepad = 0;
-
-    if (pad) {
-      const axisX = pad.axes.length > 0 ? pad.axes[0].getValue() : 0;
-      if (Math.abs(axisX) > joystickThreshold) {
-        xAxisJoystick = axisX;
-      }
-      const axisY = pad.axes.length > 1 ? pad.axes[1].getValue() : 0;
-      if (Math.abs(axisY) > joystickThreshold) {
-        yAxisJoystick = -axisY;
-      }
-
-      if (pad.buttons.length > 6 && pad.buttons[6].value > joystickThreshold) {
-        triggerAxisGamepad = -1.0;
-      } else if (pad.buttons.length > 7 && pad.buttons[7].value > joystickThreshold) {
-        triggerAxisGamepad = 1.0;
-      }
-    }
-    const rightTriggerPressed = pad
-      ? pad.buttons.length > 7 && pad.buttons[7].value > joystickThreshold
-      : false;
-    const rightTriggerJustDown = rightTriggerPressed && !this.prevRightTriggerPressed;
-    this.prevRightTriggerPressed = rightTriggerPressed;
-    const spawnPressed =
-      this.cursors.space?.isDown ||
-      (pad ? pad.buttons.length > 0 && pad.buttons[0].pressed : false);
+    this.inputHandler.update();
 
     // After the physics simulation we need to snap as the first thing. Otherwise the recording
     // check will be off.
@@ -121,32 +87,30 @@ class MyGame extends Phaser.Scene {
       this.allowCameraMovement = false;
       this.lastSpawnPoint = null;
     } else if (this.playerRocketController) {
-      let xAxis = xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard;
-      let yAxis = triggerAxisGamepad !== 0 ? triggerAxisGamepad : yAxisKeyboard;
-      this.playerRocketController.applyInput(xAxis, yAxis);
+      const rocketInput = this.inputHandler.getRocketControlInput();
+      this.playerRocketController.applyInput(rocketInput.x, rocketInput.y);
     } else {
-      if (Phaser.Input.Keyboard.JustDown(this.tabKey) || rightTriggerJustDown) {
+      if (this.inputHandler.isTabButtonJustDown()) {
         this.islandManager.selectNextSpawnerIsland();
         const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         const cam = this.cameras.main;
         if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
         this.cameras.main.pan(spawn.x, spawn.y, 500, "Sine.easeInOut");
       }
-      let xAxis = xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard;
-      let yAxis = yAxisJoystick !== 0 ? yAxisJoystick : yAxisKeyboard;
+      const cameraInput = this.inputHandler.getCameraControlInput();
       if (!this.allowCameraMovement) {
-        if (xAxis === 0 && yAxis === 0) {
+        if (cameraInput.x === 0 && cameraInput.y === 0) {
           this.allowCameraMovement = true;
         }
-      } else if (xAxis !== 0 || yAxis !== 0) {
+      } else if (cameraInput.x !== 0 || cameraInput.y !== 0) {
         const cam = this.cameras.main;
         if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
         const CAMERA_SCROLL_SPEED = 10;
-        cam.scrollX += xAxis * CAMERA_SCROLL_SPEED;
-        cam.scrollY -= yAxis * CAMERA_SCROLL_SPEED;
+        cam.scrollX += cameraInput.x * CAMERA_SCROLL_SPEED;
+        cam.scrollY -= cameraInput.y * CAMERA_SCROLL_SPEED;
       }
 
-      if (spawnPressed) {
+      if (this.inputHandler.isPrimaryActionButtonJustDown()) {
         this.lastSpawnPoint = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         console.log("Spawn point: " + this.lastSpawnPoint.x + " " + this.lastSpawnPoint.y);
         this.playerRocketController = new PlayerRocketController(
