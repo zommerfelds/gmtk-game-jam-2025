@@ -7,6 +7,7 @@ import Text = Phaser.GameObjects.Text;
 import { Rocket } from "./rockets/rocket";
 import Vector2Like = Phaser.Types.Math.Vector2Like;
 import InputHandler from "./utils/input_handler";
+import { preloadAssets } from "./utils/asset_loader";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 30;
@@ -33,24 +34,7 @@ class MyGame extends Phaser.Scene {
   }
 
   preload() {
-    this.load.path = "assets/";
-    this.load_sprite("rocket");
-    this.load_sprite("island_cacti");
-    this.load_sprite("island_cave");
-    this.load_sprite("island_doom");
-    this.load_sprite("island_ireland");
-    this.load_sprite("island_lake");
-    this.load_sprite("island_skull");
-    this.load_sprite("effect_explosion", /* skipCollision= */ true);
-    this.load_sprite("icon_cactus", /* skipCollision= */ true);
-    this.load_sprite("icon_lava", /* skipCollision= */ true);
-  }
-
-  load_sprite(name: string, skipCollision: boolean = false) {
-    this.load.aseprite(name, `sprite_${name}.png`, `sprite_${name}.json`);
-    if (!skipCollision) {
-      this.load.json(`${name}_collision`, `sprite_${name}-collision.json`);
-    }
+    preloadAssets(this);
   }
 
   create() {
