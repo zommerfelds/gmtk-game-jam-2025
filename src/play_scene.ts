@@ -112,6 +112,7 @@ export default class PlayScene extends Phaser.Scene {
       this.cycleWhenRecordingStarted,
       this.lastSpawnPoint,
       this.islandManager.getOutstandingGoals(),
+      this.islandManager.hasMultipleSpawners(),
     );
   }
 

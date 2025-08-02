@@ -36,9 +36,14 @@ export default class GameUI {
     cycleWhenRecordingStarted: number,
     lastSpawnPoint: Vector2Like | null,
     outstandingGoals: string[],
+    hasMultipleSpawners: boolean,
   ) {
     this.recordingText.setText(
-      playerRocket ? `Recording` : `Press space to spawn a rocket\nPress tab to switch spawner`,
+      playerRocket
+        ? `Recording`
+        : `Press space to spawn a rocket${
+            hasMultipleSpawners ? "\nPress tab to switch spawner" : ""
+          }`,
     );
 
     let returnMsg = "";

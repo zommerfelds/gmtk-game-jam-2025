@@ -94,6 +94,10 @@ export default class IslandManager {
     this.islands.forEach(island => island.processCycleStep());
   }
 
+  hasMultipleSpawners(): boolean {
+    return this.discoveredSpawnerIslands.size > 1;
+  }
+
   private snapToIsland(rocket: Rocket, island: Island) {
     const [a, b] = island.getLandingLine();
     const midpoint = new Phaser.Math.Vector2((a.x + b.x) * 0.5, (a.y + b.y) * 0.5);
