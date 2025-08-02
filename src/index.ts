@@ -4,6 +4,7 @@ import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocketController from "./rockets/recorded_rocket";
 import IslandManager from "./islands/island_manager";
 import Text = Phaser.GameObjects.Text;
+import { Rocket } from "./rockets/rocket";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 30;
@@ -28,8 +29,10 @@ class MyGame extends Phaser.Scene {
   preload() {
     this.load.path = "assets/";
     this.load_sprite("rocket");
-    this.load_sprite("island_ireland");
+    this.load_sprite("island_cacti");
     this.load_sprite("island_doom");
+    this.load_sprite("island_ireland");
+    this.load_sprite("island_skull");
   }
 
   load_sprite(name: string) {
@@ -56,7 +59,7 @@ class MyGame extends Phaser.Scene {
       const spawnPoint = this.islandManager.getMainIsland().getSpawnPoint();
       console.log("Spawn point: " + spawnPoint.x + " " + spawnPoint.y);
       this.PlayerRocketController = new PlayerRocketController(
-        new ReversibleRocket(this, spawnPoint.x, spawnPoint.y),
+        new ReversibleRocket(this, spawnPoint.x, spawnPoint.y, this.onRocketDestroyed.bind(this)),
         this.cameras.main,
         CYCLE_STEPS,
       );
@@ -84,6 +87,14 @@ class MyGame extends Phaser.Scene {
         ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
         : `Press space to spawn a rocket`,
     );
+  }
+
+  private onRocketDestroyed(rocket: Rocket) {
+    if (rocket == this.playerRocket?.getRocket()) {
+      this.cameras.main.stopFollow();
+      this.playerRocket = null;
+    }
+    this.recordedRockets = this.recordedRockets.filter(el => el.getRocket() != rocket);
   }
 }
 
