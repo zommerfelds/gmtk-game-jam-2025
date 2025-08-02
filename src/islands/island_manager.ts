@@ -23,6 +23,7 @@ export default class IslandManager {
       new IslandCacti(scene, 300, 100),
       new IslandSkull(scene, 0, 0),
       new IslandCave(scene, 700, 300),
+      new Island(scene, 1400, 200, "island_lake"),
     ].concat(this.spawnerIslands);
   }
 
