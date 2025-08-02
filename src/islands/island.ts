@@ -17,16 +17,12 @@ export default class Island {
         this.sprite.setStatic(true);
         this.landingLine = getLandingLine(collisionShape).map(
             l =>
-                new Phaser.Math.Vector2(
+                new Vector2(
                     l.x + this.sprite.x - this.sprite.width * this.sprite.originX,
                     l.y + this.sprite.y - this.sprite.height * this.sprite.originY,
                 ),
         );
-        const spawn = this.landingLine[0].add(this.landingLine[1]).scale(0.5);
-        this.spawnPoint = new Phaser.Math.Vector2(
-            spawn.x + this.sprite.x - this.sprite.width * this.sprite.originX,
-            spawn.y + this.sprite.y - this.sprite.height * this.sprite.originY,
-        )
+        this.spawnPoint = this.landingLine[0].clone().add(this.landingLine[1]).scale(0.5);
 
         this.sprite.play({ key: "Idle", repeat: -1 });
     }

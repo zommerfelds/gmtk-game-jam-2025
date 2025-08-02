@@ -21,8 +21,6 @@ class MyGame extends Phaser.Scene {
   private cycleWhenRecordingStarted = 0;
   private recordingText: Text;
   private landingStatusText: Text;
-  private spawnPoint?: Phaser.Math.Vector2;
-  private lowestPoint?: Phaser.GameObjects.Arc;
   private landingLine: Phaser.Math.Vector2[];
   private rocketFootPoint: Phaser.GameObjects.Arc;
   private mainIsland: Island
@@ -46,15 +44,7 @@ class MyGame extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-
-    this.playerRocket = new PlayerRocket(
-      new ReversibleRocket(this, 400, 300),
-      this.cameras.main,
-      CYCLE_STEPS,
-    );
-
     this.mainIsland = new IslandIreland(this, 400, 400)
-    this.spawnPoint = this.mainIsland.getSpawnPoint()
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
     this.landingStatusText = this.add.text(5, 30, "").setScrollFactor(0);
@@ -75,8 +65,8 @@ class MyGame extends Phaser.Scene {
       const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
-      this.cycleWhenRecordingStarted = this.currentCycleStep;
-      const spawnPoint = this.getSpawnPoint();
+      const spawnPoint = this.mainIsland.getSpawnPoint();
+      console.log("SPawn point: " + spawnPoint.x + " " + spawnPoint.y)
       this.playerRocket = new PlayerRocket(
         new ReversibleRocket(this, spawnPoint.x, spawnPoint.y),
         this.cameras.main,
@@ -111,10 +101,6 @@ class MyGame extends Phaser.Scene {
         ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
         : `Press space to spawn a rocket`,
     );
-  }
-
-  private getSpawnPoint(): Phaser.Math.Vector2 {
-    return this.landingLine[0].clone().add(this.landingLine[1]).scale(0.5);
   }
 }
 
