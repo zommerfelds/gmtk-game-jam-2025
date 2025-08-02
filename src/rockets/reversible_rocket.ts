@@ -33,13 +33,11 @@ export default class ReversibleRocket implements Rocket {
     // Calculate torque and force.
     const appliedTorque = torqueInput * MAX_TORQUE;
     const maxAcceleration =
-      accelerationInput > 0
-        ? MAX_FORWARDS_ACCELERATION
-        : MAX_BACKWARDS_ACCELERATION;
+      accelerationInput > 0 ? MAX_FORWARDS_ACCELERATION : MAX_BACKWARDS_ACCELERATION;
     const appliedAcceleration = accelerationInput * maxAcceleration;
     const appliedForce = new Phaser.Math.Vector2(
       Math.cos(this.sprite.rotation - Math.PI / 2) * appliedAcceleration,
-      Math.sin(this.sprite.rotation - Math.PI / 2) * appliedAcceleration
+      Math.sin(this.sprite.rotation - Math.PI / 2) * appliedAcceleration,
     );
 
     // Apply torque and force.

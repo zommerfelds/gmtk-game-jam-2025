@@ -27,15 +27,8 @@ class MyGame extends Phaser.Scene {
     this.load.path = "assets/";
     this.load.aseprite("rocket", "sprite_rocket.png", "sprite_rocket.json");
     this.load.json("rocket_collision", "sprite_rocket-collision.json");
-    this.load.aseprite(
-      "island_ireland",
-      "sprite_island_ireland.png",
-      "sprite_island_ireland.json"
-    );
-    this.load.json(
-      "island_ireland_collision",
-      "sprite_island_ireland-collision.json"
-    );
+    this.load.aseprite("island_ireland", "sprite_island_ireland.png", "sprite_island_ireland.json");
+    this.load.json("island_ireland_collision", "sprite_island_ireland-collision.json");
   }
 
   create() {
@@ -46,7 +39,7 @@ class MyGame extends Phaser.Scene {
     this.playerRocket = new PlayerRocket(
       new ReversibleRocket(this, 400, 300),
       this.cameras.main,
-      CYCLE_STEPS
+      CYCLE_STEPS,
     );
 
     const island = this.matter.add.sprite(400, 400, "island_ireland");
@@ -62,43 +55,33 @@ class MyGame extends Phaser.Scene {
       this.recordedRockets.push(this.playerRocket.finishRecording());
       this.playerRocket = null;
     } else if (this.playerRocket) {
-      const yAxis = this.cursors.up?.isDown
-        ? 1.0
-        : this.cursors.down?.isDown
-        ? -1.0
-        : 0;
-      const xAxis = this.cursors.right?.isDown
-        ? 1.0
-        : this.cursors.left?.isDown
-        ? -1.0
-        : 0;
+      const yAxis = this.cursors.up?.isDown ? 1.0 : this.cursors.down?.isDown ? -1.0 : 0;
+      const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
       this.cycleWhenRecordingStarted = this.currentCycleStep;
       this.playerRocket = new PlayerRocket(
         new ReversibleRocket(this, 400, 300),
         this.cameras.main,
-        CYCLE_STEPS
+        CYCLE_STEPS,
       );
     }
 
-    this.recordedRockets.forEach((recordedRocket) => {
+    this.recordedRockets.forEach(recordedRocket => {
       recordedRocket.applyNextRecordedInput();
     });
 
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;
     this.cycleText.setText(
-      `Current time in cycle: ${(
-        this.currentCycleStep / TARGET_FRAMERATE
-      ).toFixed(1)}/${CYCLE_SECONDS}`
+      `Current time in cycle: ${(this.currentCycleStep / TARGET_FRAMERATE).toFixed(
+        1,
+      )}/${CYCLE_SECONDS}`,
     );
     this.recordingText.setText(
       this.playerRocket
-        ? `Recording (started at ${(
-            this.cycleWhenRecordingStarted / TARGET_FRAMERATE
-          ).toFixed(1)})`
-        : `Press space to spawn another rocket.`
+        ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
+        : `Press space to spawn another rocket.`,
     );
   }
 }

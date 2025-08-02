@@ -2,13 +2,11 @@
 
 export default function setPolygonBody(
   sprite: Phaser.Physics.Matter.Image | Phaser.Physics.Matter.Sprite,
-  collisionJson: any
+  collisionJson: any,
 ) {
   if (!collisionJson?.polygons) return;
 
-  const polygons = (collisionJson.polygons as any[]).filter(
-    (p) => p.name !== "spawn"
-  );
+  const polygons = (collisionJson.polygons as any[]).filter(p => p.name !== "spawn");
   if (!polygons.length) return;
 
   const MatterLib = (Phaser.Physics.Matter as any).Matter;
@@ -16,7 +14,7 @@ export default function setPolygonBody(
   const Body = MatterLib.Body;
   const parts: any[] = [];
 
-  polygons.forEach((poly) => {
+  polygons.forEach(poly => {
     const part = Bodies.fromVertices(sprite.x, sprite.y, poly.points, {}, true);
     if (part) parts.push(part);
   });
