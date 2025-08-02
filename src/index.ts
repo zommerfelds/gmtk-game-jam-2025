@@ -33,8 +33,6 @@ class MyGame extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
-    this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
 
     this.playerRocket = new PlayerRocket(
       new ReversibleRocket(this, 400, 300),
@@ -48,6 +46,9 @@ class MyGame extends Phaser.Scene {
     const islandCollision = this.cache.json.get("island_ireland_collision");
     setPolygonBody(island, islandCollision);
     island.setStatic(true);
+
+    this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
+    this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
   }
 
   update() {
