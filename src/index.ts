@@ -14,7 +14,7 @@ const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 
 class MyGame extends Phaser.Scene {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
-  private PlayerRocketController?: PlayerRocketController;
+  private playerRocketController?: PlayerRocketController;
   private recordedRockets: RecordedRocketController[] = [];
   private currentCycleStep = 0;
   private cycleText: Text;
@@ -48,17 +48,17 @@ class MyGame extends Phaser.Scene {
   }
 
   update() {
-    if (this.PlayerRocketController && this.PlayerRocketController.shouldFinishRecording()) {
-      this.recordedRockets.push(this.PlayerRocketController.finishRecording());
-      this.PlayerRocketController = null;
-    } else if (this.PlayerRocketController) {
+    if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
+      this.recordedRockets.push(this.playerRocketController.finishRecording());
+      this.playerRocketController = null;
+    } else if (this.playerRocketController) {
       const yAxis = this.cursors.up?.isDown ? 1.0 : this.cursors.down?.isDown ? -1.0 : 0;
       const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
-      this.PlayerRocketController.applyInput(xAxis, yAxis);
+      this.playerRocketController.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
       const spawnPoint = this.islandManager.getMainIsland().getSpawnPoint();
       console.log("Spawn point: " + spawnPoint.x + " " + spawnPoint.y);
-      this.PlayerRocketController = new PlayerRocketController(
+      this.playerRocketController = new PlayerRocketController(
         new ReversibleRocket(this, spawnPoint.x, spawnPoint.y, this.onRocketDestroyed.bind(this)),
         this.cameras.main,
         CYCLE_STEPS,
@@ -71,8 +71,8 @@ class MyGame extends Phaser.Scene {
       this.islandManager.checkLandingStatus(recordedRocket.getRocket(), FIXED_DT_MS);
     });
 
-    if (this.PlayerRocketController) {
-      this.islandManager.checkLandingStatus(this.PlayerRocketController.getRocket(), FIXED_DT_MS);
+    if (this.playerRocketController) {
+      this.islandManager.checkLandingStatus(this.playerRocketController.getRocket(), FIXED_DT_MS);
     }
 
     this.currentCycleStep += 1;
@@ -83,16 +83,16 @@ class MyGame extends Phaser.Scene {
       )}/${CYCLE_SECONDS}`,
     );
     this.recordingText.setText(
-      this.PlayerRocketController
+      this.playerRocketController
         ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
         : `Press space to spawn a rocket`,
     );
   }
 
   private onRocketDestroyed(rocket: Rocket) {
-    if (rocket == this.playerRocket?.getRocket()) {
+    if (rocket == this.playerRocketController?.getRocket()) {
       this.cameras.main.stopFollow();
-      this.playerRocket = null;
+      this.playerRocketController = null;
     }
     this.recordedRockets = this.recordedRockets.filter(el => el.getRocket() != rocket);
   }
