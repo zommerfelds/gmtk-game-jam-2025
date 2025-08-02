@@ -26,6 +26,20 @@ export interface Rocket extends Landable {
   explode(scene: Phaser.Scene, onRocketDestroyed: (r: Rocket) => void): void;
 
   /**
+   * Attempts to store the given good into the rocket. May fail if the rocket is already full.
+   * @param {GoodsType} good - The good to store.
+   * @return {boolean} Whether the good was stored.
+   */
+  tryStoreGood(good: GoodsType): boolean;
+
+  /**
+   * Attempts to take the given good from the rocket. May fail if the rocket doesn't have that good on board.
+   * @param {GoodsType} good - The good to take.
+   * @return {boolean} Whether the good was taken.
+   */
+  tryTakeGood(good: GoodsType): boolean;
+
+  /**
    * Makes the specified camera follow this rocket.
    *
    * @param {Camera} camera - The camera that should follow the target.

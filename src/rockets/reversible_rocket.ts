@@ -10,12 +10,14 @@ const MAX_FORWARDS_ACCELERATION = 0.0005;
 const MAX_BACKWARDS_ACCELERATION = 0.00025;
 
 export default class ReversibleRocket implements Rocket {
-  private sprite: Phaser.Physics.Matter.Sprite;
-  private footLocal = new Phaser.Math.Vector2(0, 0);
+  private readonly sprite: Phaser.Physics.Matter.Sprite;
+  private readonly footLocal: Vector2;
+
   private idle = true;
   private isDestroyed = false;
   private linearVelocityAbs: number = 0;
   private angularVelocityAbs: number = 0;
+  private loadedGood: GoodsType = GoodsType.NONE;
 
   constructor(
     scene: Phaser.Scene,
@@ -39,7 +41,7 @@ export default class ReversibleRocket implements Rocket {
         if (v.y > lowestVertex.y) lowestVertex = v;
       }
       const local = this.sprite.getLocalPoint(lowestVertex.x, lowestVertex.y);
-      this.footLocal.set(0, local.y - this.sprite.height * this.sprite.originY);
+      this.footLocal = new Vector2(0, local.y - this.sprite.height * this.sprite.originY);
       this.sprite.setPosition(initialX - this.footLocal.x, initialY - this.footLocal.y);
     }
 
@@ -111,6 +113,22 @@ export default class ReversibleRocket implements Rocket {
     this.sprite.setVelocity(0, 0);
     this.sprite.setAngularVelocity(0);
     console.log("Landed!");
+  }
+
+  public tryStoreGood(good: GoodsType): boolean {
+    if (this.loadedGood != GoodsType.NONE) {
+      return false;
+    }
+    this.loadedGood = good;
+    return true;
+  }
+
+  public tryTakeGood(good: GoodsType): boolean {
+    if (this.loadedGood != good) {
+      return false;
+    }
+    this.loadedGood = GoodsType.NONE;
+    return true;
   }
 
   public explode(scene: Phaser.Scene, onRocketDestroyed: (r: Rocket) => void) {
