@@ -30,7 +30,7 @@ export default class ReversibleRocket implements Rocket {
         if (v.y > lowestVertex.y) lowestVertex = v;
       }
       const local = this.sprite.getLocalPoint(lowestVertex.x, lowestVertex.y);
-      this.footLocal.set(0 - this.sprite.width / 2, local.y - this.sprite.height / 2);
+      this.footLocal.set(0, local.y - this.sprite.height * this.sprite.originY);
     }
   }
 

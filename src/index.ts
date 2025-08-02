@@ -3,7 +3,7 @@ import PlayerRocket from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocket from "./rockets/recorded_rocket";
 import Text = Phaser.GameObjects.Text;
-import { setPolygonBody, getSpawnPoint } from "./utils/polygon_body";
+import { setPolygonBody, getLandingLine } from "./utils/polygon_body";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 60;
@@ -48,12 +48,16 @@ class MyGame extends Phaser.Scene {
     const islandCollision = this.cache.json.get("island_ireland_collision");
     setPolygonBody(island, islandCollision);
     island.setStatic(true);
-    const spawn = getSpawnPoint(islandCollision);
-    this.spawnPoint = new Phaser.Math.Vector2(spawn.x + island.x, spawn.y + island.y);
+    const landingLine = getLandingLine(islandCollision);
+    const spawn = landingLine[0].add(landingLine[1]).scale(0.5);
+    this.spawnPoint = new Phaser.Math.Vector2(
+      spawn.x + island.x - island.width * island.originX,
+      spawn.y + island.y - island.height * island.originY,
+    );
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
 
-    // Tmp: draw spawn point. czom will remove.
+    // Tmp: draw spawn point and rocket foot. Romve once no longer needed.
     this.add.circle(this.spawnPoint.x, this.spawnPoint.y, 5, 0x0000ff, 1);
     this.lowestPoint = this.add.circle(this.spawnPoint.x, this.spawnPoint.y, 5, 0x00ffff, 1);
   }
@@ -118,7 +122,7 @@ const config = {
         isFixed: true,
         fps: TARGET_FRAMERATE,
       },
-      // debug: true, // Uncomment to see physics shapes
+      debug: true, // Uncomment to see physics shapes
     },
   },
   scale: {
