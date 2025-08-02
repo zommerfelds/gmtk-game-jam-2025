@@ -3,7 +3,7 @@ import PlayerRocketController from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocketController from "./rockets/recorded_rocket";
 import IslandManager from "./islands/island_manager";
-import Text = Phaser.GameObjects.Text;
+import GameUI from "./ui/game_ui";
 import { Rocket } from "./rockets/rocket";
 import Vector2Like = Phaser.Types.Math.Vector2Like;
 import InputHandler from "./utils/input_handler";
@@ -20,11 +20,8 @@ class MyGame extends Phaser.Scene {
   private playerRocketController?: PlayerRocketController;
   private recordedRockets: RecordedRocketController[] = [];
   private currentCycleStep = 0;
-  private cycleText: Text;
   private cycleWhenRecordingStarted = 0;
-  private recordingText: Text;
-  private returnToStartText: Text;
-  private outstandingGoalsText: Text;
+  private ui: GameUI;
   private islandManager: IslandManager;
   private lastSpawnPoint?: Vector2Like = null;
   private allowCameraMovement = false;
@@ -42,10 +39,7 @@ class MyGame extends Phaser.Scene {
     this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
     const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
     this.cameras.main.centerOn(spawn.x, spawn.y);
-    this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
-    this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
-    this.returnToStartText = this.add.text(5, 35, "").setScrollFactor(0);
-    this.outstandingGoalsText = this.add.text(5, 580, "").setScrollFactor(0);
+    this.ui = new GameUI(this, CYCLE_SECONDS, TARGET_FRAMERATE);
   }
 
   update() {
@@ -119,24 +113,13 @@ class MyGame extends Phaser.Scene {
 
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;
-    this.cycleText.setText(
-      `Current time in cycle: ${(this.currentCycleStep / TARGET_FRAMERATE).toFixed(
-        1,
-      )}/${CYCLE_SECONDS}`,
+    this.ui.update(
+      this.currentCycleStep,
+      this.playerRocketController ?? null,
+      this.cycleWhenRecordingStarted,
+      this.lastSpawnPoint,
+      this.islandManager.getOutstandingGoals(),
     );
-    this.recordingText.setText(
-      this.playerRocketController
-        ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
-        : `Press space to spawn a rocket\nPress tab to switch spawner`,
-    );
-    this.returnToStartText.setText(
-      this.playerRocketController
-        ? this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0
-          ? "Return to start before the loop ends!"
-          : "All good, you're back at the start :)"
-        : "",
-    );
-    this.outstandingGoalsText.setText(this.islandManager.getOutstandingGoals());
   }
 
   private onRocketDestroyed(rocket: Rocket) {
