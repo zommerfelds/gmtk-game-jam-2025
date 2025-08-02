@@ -2,6 +2,7 @@ import "phaser";
 import * as Phaser from "phaser";
 import Island from "./island";
 import IslandIreland from "./island_ireland";
+import IslandDoom from "./island_doom";
 import { distancePointToSegment } from "../utils/geometry";
 
 interface RocketLike {
@@ -14,7 +15,7 @@ export default class IslandManager {
 
   constructor(scene: Phaser.Scene) {
     this.mainIsland = new IslandIreland(scene, 400, 400);
-    const island2 = new IslandIreland(scene, 200, 600);
+    const island2 = new IslandDoom(scene, 100, 500);
     const island3 = new IslandIreland(scene, 600, 600);
     this.islands = [this.mainIsland, island2, island3];
   }
