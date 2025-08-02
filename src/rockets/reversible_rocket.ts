@@ -2,8 +2,8 @@ import "phaser";
 import { Rocket, RocketControlType } from "./rocket";
 import { setPolygonBody } from "../utils/polygon_body";
 import Vector2 = Phaser.Math.Vector2;
-import AnimationManager = Phaser.Animations.AnimationManager;
 import * as Phaser from "phaser";
+import CollisionStartEvent = Phaser.Physics.Matter.Events.CollisionStartEvent;
 
 const MAX_TORQUE = 0.005;
 const MAX_FORWARDS_ACCELERATION = 0.0005;
@@ -12,8 +12,11 @@ const MAX_BACKWARDS_ACCELERATION = 0.00025;
 export default class ReversibleRocket implements Rocket {
   private sprite: Phaser.Physics.Matter.Sprite;
   private footLocal = new Phaser.Math.Vector2(0, 0);
+  private isDestroyed = false;
+  private linearVelocityAbs: number = 0;
+  private angularVelocityAbs: number = 0;
 
-  constructor(scene: Phaser.Scene, initialX: number, initialY: number) {
+  constructor(scene: Phaser.Scene, initialX: number, initialY: number, onRocketDestroyed: (r: Rocket) => void) {
     this.sprite = scene.matter.add.sprite(initialX, initialY, "rocket");
     scene.anims.createFromAseprite("rocket", undefined, this.sprite);
 
@@ -33,6 +36,38 @@ export default class ReversibleRocket implements Rocket {
       this.footLocal.set(0, local.y - this.sprite.height * this.sprite.originY);
       this.sprite.setPosition(initialX - this.footLocal.x, initialY - this.footLocal.y);
     }
+
+    body.label = "rocket";
+
+    // Add collision detection
+    scene.matter.world.on("collisionstart", (event: CollisionStartEvent) => {
+      event.pairs.forEach((pair) => {
+        const bodyA = pair.bodyA.parent;
+        const bodyB = pair.bodyB.parent;
+        if (bodyA.id == body.id || bodyB.id == body.id) {
+          if (this.isDestroyed) {
+            return;
+          }
+          let shouldExplode = false;
+          if (bodyA.label == "rocket" && bodyB.label == "rocket") {
+            // Two rockets colliding always explode each rocket.
+            shouldExplode = true;
+          } else {
+            console.log("angular:", 15 * this.angularVelocityAbs, "linear", this.linearVelocityAbs);
+            const combinedVelocity = 15 * this.angularVelocityAbs + this.linearVelocityAbs;
+            if (combinedVelocity > 0.5) {
+              shouldExplode = true;
+            }
+          }
+          if (shouldExplode) {
+            this.isDestroyed = true;
+            // TODO: Play explosion animation.
+            this.sprite.destroy(true);
+            onRocketDestroyed(this);
+          }
+        }
+      });
+    });
   }
 
   public getRocketControlType(): RocketControlType {
@@ -42,6 +77,9 @@ export default class ReversibleRocket implements Rocket {
   public applyInput(x: number, y: number) {
     const torqueInput = x;
     const accelerationInput = y;
+
+    this.linearVelocityAbs = new Vector2(this.sprite.getVelocity()).length();
+    this.angularVelocityAbs = Math.abs(this.sprite.getAngularVelocity());
 
     // Calculate torque and force.
     const appliedTorque = torqueInput * MAX_TORQUE;

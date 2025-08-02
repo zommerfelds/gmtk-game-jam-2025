@@ -14,6 +14,10 @@ export default class RecordedRocket implements Landable {
     this.recordedInputs = recordedInputs;
   }
 
+  public getRocket() {
+    return this.rocket;
+  }
+
   public applyNextRecordedInput() {
     const nextRecordedInput =
       this.recordedInputs[this.currentRecordedInputIndex];

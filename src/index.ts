@@ -5,6 +5,7 @@ import RecordedRocket from "./rockets/recorded_rocket";
 import { distancePointToSegment } from "./utils/geometry";
 import Text = Phaser.GameObjects.Text;
 import { setPolygonBody, getLandingLine } from "./utils/polygon_body";
+import {Rocket} from "./rockets/rocket";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 30;
@@ -74,7 +75,7 @@ class MyGame extends Phaser.Scene {
       this.cycleWhenRecordingStarted = this.currentCycleStep;
       const spawnPoint = this.getSpawnPoint();
       this.playerRocket = new PlayerRocket(
-        new ReversibleRocket(this, spawnPoint.x, spawnPoint.y),
+        new ReversibleRocket(this, spawnPoint.x, spawnPoint.y, this.onRocketDestroyed.bind(this)),
         this.cameras.main,
         CYCLE_STEPS,
       );
@@ -111,6 +112,14 @@ class MyGame extends Phaser.Scene {
 
   private getSpawnPoint(): Phaser.Math.Vector2 {
     return this.landingLine[0].clone().add(this.landingLine[1]).scale(0.5);
+  }
+
+  private onRocketDestroyed(rocket: Rocket) {
+    if (rocket == this.playerRocket?.getRocket()) {
+      this.cameras.main.stopFollow();
+      this.playerRocket = null;
+    }
+    this.recordedRockets = this.recordedRockets.filter(el => el.getRocket() != rocket);
   }
 }
 

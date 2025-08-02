@@ -25,6 +25,10 @@ export default class PlayerRocket implements Landable {
     return this.rocket.getRocketControlType();
   }
 
+  public getRocket() {
+    return this.rocket;
+  }
+
   /**
    * Applies input based on the provided x and y values.
    * All Values are numbers between -1.0 and 1.0.
