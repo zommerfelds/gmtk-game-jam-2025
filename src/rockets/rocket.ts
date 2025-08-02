@@ -29,4 +29,6 @@ export interface Rocket extends Landable {
    * @param {Camera} camera - The camera that should follow the target.
    */
   followWithCamera(camera: Camera): void;
+  /** Returns foot position (lowest point) of the rocket. */
+  getFootPosition(): Vector2;
 }

@@ -3,7 +3,7 @@ import PlayerRocket from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocket from "./rockets/recorded_rocket";
 import Text = Phaser.GameObjects.Text;
-import setPolygonBody from "./utils/set_polygon_body";
+import { setPolygonBody, getSpawnPoint } from "./utils/polygon_body";
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 60;
@@ -18,6 +18,8 @@ class MyGame extends Phaser.Scene {
   private cycleText: Text;
   private cycleWhenRecordingStarted = 0;
   private recordingText: Text;
+  private spawnPoint?: Phaser.Math.Vector2;
+  private lowestPoint?: Phaser.GameObjects.Arc;
 
   constructor() {
     super();
@@ -46,9 +48,14 @@ class MyGame extends Phaser.Scene {
     const islandCollision = this.cache.json.get("island_ireland_collision");
     setPolygonBody(island, islandCollision);
     island.setStatic(true);
-
+    const spawn = getSpawnPoint(islandCollision);
+    this.spawnPoint = new Phaser.Math.Vector2(spawn.x + island.x, spawn.y + island.y);
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
+
+    // Tmp: draw spawn point. czom will remove.
+    this.add.circle(this.spawnPoint.x, this.spawnPoint.y, 5, 0x0000ff, 1);
+    this.lowestPoint = this.add.circle(this.spawnPoint.x, this.spawnPoint.y, 5, 0x00ffff, 1);
   }
 
   update() {
@@ -66,6 +73,18 @@ class MyGame extends Phaser.Scene {
         this.cameras.main,
         CYCLE_STEPS,
       );
+    }
+
+    if (this.playerRocket && this.spawnPoint) {
+      const pos = this.playerRocket.getFootPosition();
+      this.lowestPoint.setPosition(pos.x, pos.y);
+      const distance = Phaser.Math.Distance.Between(
+        this.spawnPoint.x,
+        this.spawnPoint.y,
+        pos.x,
+        pos.y,
+      );
+      console.log("distance", distance);
     }
 
     this.recordedRockets.forEach(recordedRocket => {

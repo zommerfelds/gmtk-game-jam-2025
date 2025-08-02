@@ -1,6 +1,6 @@
 import "phaser";
 import { Rocket, RocketControlType } from "./rocket";
-import setPolygonBody from "../utils/set_polygon_body";
+import { setPolygonBody } from "../utils/polygon_body";
 import Vector2 = Phaser.Math.Vector2;
 import AnimationManager = Phaser.Animations.AnimationManager;
 import * as Phaser from "phaser";
@@ -11,6 +11,7 @@ const MAX_BACKWARDS_ACCELERATION = 0.00025;
 
 export default class ReversibleRocket implements Rocket {
   private sprite: Phaser.Physics.Matter.Sprite;
+  private footLocal = new Phaser.Math.Vector2(0, 0);
 
   constructor(scene: Phaser.Scene, initialX: number, initialY: number) {
     this.sprite = scene.matter.add.sprite(initialX, initialY, "rocket");
@@ -20,6 +21,17 @@ export default class ReversibleRocket implements Rocket {
     setPolygonBody(this.sprite, collisionShape);
     this.sprite.setFrictionAir(0.02);
     this.sprite.setOrigin(0.5, 0.5);
+
+    // Compute local foot position so it rotates with the sprite.
+    const body = this.sprite.body as MatterJS.BodyType;
+    if (body && body.vertices?.length) {
+      let lowestVertex = body.vertices[0];
+      for (const v of body.vertices) {
+        if (v.y > lowestVertex.y) lowestVertex = v;
+      }
+      const local = this.sprite.getLocalPoint(lowestVertex.x, lowestVertex.y);
+      this.footLocal.set(0 - this.sprite.width / 2, local.y - this.sprite.height / 2);
+    }
   }
 
   public getRocketControlType(): RocketControlType {
@@ -55,7 +67,17 @@ export default class ReversibleRocket implements Rocket {
   }
 
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
-    // TODO
+    this.sprite.setPosition(finalPosition.x, finalPosition.y);
+    this.sprite.setRotation(finalRotation);
+  }
+
+  public getFootPosition(): Vector2 {
+    const rad = this.sprite.rotation;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    const worldX = this.sprite.x + this.footLocal.x * cos - this.footLocal.y * sin;
+    const worldY = this.sprite.y + this.footLocal.x * sin + this.footLocal.y * cos;
+    return new Phaser.Math.Vector2(worldX, worldY);
   }
 
   followWithCamera(camera: Phaser.Cameras.Scene2D.Camera) {

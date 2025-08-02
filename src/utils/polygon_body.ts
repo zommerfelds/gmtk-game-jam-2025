@@ -1,6 +1,6 @@
 // Use this tool to create shape JSONs: https://gemini.google.com/share/713af5bc71c2
 
-export default function setPolygonBody(
+export function setPolygonBody(
   sprite: Phaser.Physics.Matter.Image | Phaser.Physics.Matter.Sprite,
   collisionJson: any,
 ) {
@@ -23,4 +23,16 @@ export default function setPolygonBody(
 
   const body = parts.length === 1 ? parts[0] : Body.create({ parts });
   sprite.setExistingBody(body);
+}
+
+export function getSpawnPoint(collisionJson: any) {
+  if (!collisionJson?.polygons) {
+    throw new Error("collisionJson has no polygons");
+  }
+  const spawnPoly = (collisionJson.polygons as any[]).find((p: any) => p.name === "spawn");
+  if (!spawnPoly?.points?.length) {
+    throw new Error("spawn polygon not found or has no points");
+  }
+  const { x, y } = spawnPoly.points[0];
+  return { x, y };
 }

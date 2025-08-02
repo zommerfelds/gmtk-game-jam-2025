@@ -54,4 +54,8 @@ export default class PlayerRocket implements Landable {
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
     this.rocket.finalizeLanding(finalPosition, finalRotation);
   }
+
+  public getFootPosition(): Vector2 {
+    return this.rocket.getFootPosition();
+  }
 }
