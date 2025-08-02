@@ -61,7 +61,7 @@ export default class ReversibleRocket implements Rocket {
           } else {
             console.log("angular:", 15 * this.angularVelocityAbs, "linear", this.linearVelocityAbs);
             const combinedVelocity = 15 * this.angularVelocityAbs + this.linearVelocityAbs;
-            if (combinedVelocity > 0.5) {
+            if (combinedVelocity > 0.8) {
               shouldExplode = true;
             }
           }
@@ -75,6 +75,9 @@ export default class ReversibleRocket implements Rocket {
             const explosion= scene.add.sprite(positionX, positionY, "effect_explosion");
             scene.anims.createFromAseprite("effect_explosion", undefined, explosion);
             explosion.play({ key: "Idle", repeat: 0 }, true);
+            setTimeout(() => {
+              explosion.destroy(true);
+            }, 10_000);
             onRocketDestroyed(this);
           }
         }
