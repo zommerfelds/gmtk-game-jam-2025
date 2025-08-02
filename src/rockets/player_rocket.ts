@@ -41,6 +41,10 @@ export default class PlayerRocket implements Landable {
     return this.recordedInputs.length == this.cycleSteps;
   }
 
+  public getRocket(): Rocket {
+    return this.rocket;
+  }
+
   /**
    * Completes the recording process and returns a RecordedRocket.
    *

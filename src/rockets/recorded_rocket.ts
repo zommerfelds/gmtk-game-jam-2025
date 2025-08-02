@@ -15,8 +15,7 @@ export default class RecordedRocket implements Landable {
   }
 
   public applyNextRecordedInput() {
-    const nextRecordedInput =
-      this.recordedInputs[this.currentRecordedInputIndex];
+    const nextRecordedInput = this.recordedInputs[this.currentRecordedInputIndex];
     this.rocket.applyInput(nextRecordedInput.x, nextRecordedInput.y);
     this.currentRecordedInputIndex += 1;
     this.currentRecordedInputIndex %= this.recordedInputs.length;
@@ -24,5 +23,9 @@ export default class RecordedRocket implements Landable {
 
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
     this.rocket.finalizeLanding(finalPosition, finalRotation);
+  }
+
+  public getRocket(): Rocket {
+    return this.rocket;
   }
 }

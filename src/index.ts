@@ -7,6 +7,7 @@ import Text = Phaser.GameObjects.Text;
 
 const TARGET_FRAMERATE = 60;
 const CYCLE_SECONDS = 30;
+const FIXED_DT_MS = 1000 / TARGET_FRAMERATE;
 
 const CYCLE_STEPS = TARGET_FRAMERATE * CYCLE_SECONDS;
 
@@ -18,7 +19,6 @@ class MyGame extends Phaser.Scene {
   private cycleText: Text;
   private cycleWhenRecordingStarted = 0;
   private recordingText: Text;
-  private landingStatusText: Text;
   private islandManager: IslandManager;
 
   constructor() {
@@ -42,7 +42,6 @@ class MyGame extends Phaser.Scene {
     this.islandManager = new IslandManager(this);
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
-    this.landingStatusText = this.add.text(5, 30, "").setScrollFactor(0);
   }
 
   update() {
@@ -61,20 +60,17 @@ class MyGame extends Phaser.Scene {
         this.cameras.main,
         CYCLE_STEPS,
       );
-    }
-
-    if (this.playerRocket) {
-      const landed = this.islandManager.checkLandingStatus(this.playerRocket);
-      this.landingStatusText?.setText(
-        landed ? "Landing status: The Eagle has landed" : "Landing status: outer space",
-      );
-    } else {
-      this.landingStatusText?.setText("Landing status: outer space");
+      this.cycleWhenRecordingStarted = this.currentCycleStep;
     }
 
     this.recordedRockets.forEach(recordedRocket => {
       recordedRocket.applyNextRecordedInput();
+      this.islandManager.checkLandingStatus(recordedRocket.getRocket(), FIXED_DT_MS);
     });
+
+    if (this.playerRocket) {
+      this.islandManager.checkLandingStatus(this.playerRocket.getRocket(), FIXED_DT_MS);
+    }
 
     this.currentCycleStep += 1;
     this.currentCycleStep %= CYCLE_STEPS;

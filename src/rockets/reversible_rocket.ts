@@ -68,8 +68,11 @@ export default class ReversibleRocket implements Rocket {
   }
 
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
-    this.sprite.setPosition(finalPosition.x, finalPosition.y);
+    this.sprite.setPosition(finalPosition.x - this.footLocal.x, finalPosition.y - this.footLocal.y);
     this.sprite.setRotation(finalRotation);
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setAngularVelocity(0);
+    console.log("Landed!");
   }
 
   public getFootPosition(): Vector2 {
@@ -79,6 +82,14 @@ export default class ReversibleRocket implements Rocket {
     const worldX = this.sprite.x + this.footLocal.x * cos - this.footLocal.y * sin;
     const worldY = this.sprite.y + this.footLocal.x * sin + this.footLocal.y * cos;
     return new Phaser.Math.Vector2(worldX, worldY);
+  }
+
+  public isStationary(): boolean {
+    const body = this.sprite.body as MatterJS.BodyType;
+    if (!body) return false;
+    const linearSpeed = body.speed ?? 0;
+    const angularSpeed = Math.abs(body.angularVelocity ?? 0);
+    return linearSpeed < 0.01 && angularSpeed < 0.01;
   }
 
   followWithCamera(camera: Phaser.Cameras.Scene2D.Camera) {
