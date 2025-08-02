@@ -72,8 +72,9 @@ class MyGame extends Phaser.Scene {
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
       this.cycleWhenRecordingStarted = this.currentCycleStep;
+      const spawnPoint = this.getSpawnPoint();
       this.playerRocket = new PlayerRocket(
-        new ReversibleRocket(this, this.spawnPoint.x, this.spawnPoint.y),
+        new ReversibleRocket(this, spawnPoint.x, spawnPoint.y),
         this.cameras.main,
         CYCLE_STEPS,
       );
@@ -106,6 +107,10 @@ class MyGame extends Phaser.Scene {
         ? `Recording (started at ${(this.cycleWhenRecordingStarted / TARGET_FRAMERATE).toFixed(1)})`
         : `Press space to spawn a rocket`,
     );
+  }
+
+  private getSpawnPoint(): Phaser.Math.Vector2 {
+    return this.landingLine[0].clone().add(this.landingLine[1]).scale(0.5);
   }
 }
 
