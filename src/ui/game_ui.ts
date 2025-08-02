@@ -23,7 +23,7 @@ export default class GameUI {
       .text(5, 145, "", { wordWrap: { width: 160 }, align: "center" })
       .setScrollFactor(0);
     this.outstandingGoalsText = scene.add
-      .text(5, 580, "", { wordWrap: { width: 400 } })
+      .text(5, 560, "", { wordWrap: { width: 800 } })
       .setScrollFactor(0);
     this.watchBody = scene.add.image(70, 70, "watch_body").setScrollFactor(0);
     this.watchArrow = scene.add.image(70, 70, "watch_arrow").setScrollFactor(0);
