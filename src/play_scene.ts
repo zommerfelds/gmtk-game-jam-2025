@@ -8,7 +8,7 @@ import { Rocket } from "./rockets/rocket";
 import Vector2Like = Phaser.Types.Math.Vector2Like;
 import InputHandler from "./utils/input_handler";
 import { preloadAssets } from "./utils/asset_loader";
-import { TARGET_FRAMERATE, CYCLE_SECONDS, FIXED_DT_MS, CYCLE_STEPS } from "./constants";
+import { TARGET_FRAMERATE, CYCLE_SECONDS, CYCLE_STEPS } from "./constants";
 
 export default class PlayScene extends Phaser.Scene {
   private inputHandler: InputHandler;
@@ -41,10 +41,10 @@ export default class PlayScene extends Phaser.Scene {
     this.inputHandler.update();
 
     this.recordedRockets.forEach(recordedRocket => {
-      this.islandManager.checkLandingStatus(recordedRocket.getRocket(), FIXED_DT_MS);
+      this.islandManager.checkLandingStatus(recordedRocket.getRocket());
     });
     if (this.playerRocketController) {
-      this.islandManager.checkLandingStatus(this.playerRocketController.getRocket(), FIXED_DT_MS);
+      this.islandManager.checkLandingStatus(this.playerRocketController.getRocket());
     }
 
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {

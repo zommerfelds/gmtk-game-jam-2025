@@ -62,7 +62,7 @@ export default class IslandManager {
     this.selectedSpawnerIsland = available[nextIndex];
   }
 
-  checkLandingStatus(rocket: Rocket, _deltaMs: number) {
+  checkLandingStatus(rocket: Rocket) {
     const TOLERANCE = 3;
     const footPos = rocket.getFootPosition();
 
