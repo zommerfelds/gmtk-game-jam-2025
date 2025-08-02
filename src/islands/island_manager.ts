@@ -6,27 +6,26 @@ import IslandDoom from "./island_doom";
 import IslandIreland from "./island_ireland";
 import { distancePointToSegment } from "../utils/geometry";
 import { Rocket } from "../rockets/rocket";
+import IslandSkull from "./island_skull";
 
 export default class IslandManager {
   private readonly islands: Island[];
   private readonly mainIsland: Island;
-  private readonly lastLandedMap = new WeakMap<Rocket, Island>();
-  private readonly candidateMap = new WeakMap<Rocket, { island: Island; elapsed: number }>();
   constructor(scene: Phaser.Scene) {
     this.mainIsland = new IslandIreland(scene, 400, 400);
     const island2 = new IslandDoom(scene, 100, 500);
     const island3 = new IslandIreland(scene, 600, 600);
     const island4 = new IslandCacti(scene, 300, 100);
-    this.islands = [this.mainIsland, island2, island3, island4];
+    const island5 = new IslandSkull(scene, 0, 0);
+    this.islands = [this.mainIsland, island2, island3, island4, island5];
   }
 
   getMainIsland(): Island {
     return this.mainIsland;
   }
 
-  checkLandingStatus(rocket: Rocket, deltaMs: number) {
+  checkLandingStatus(rocket: Rocket, _deltaMs: number) {
     const TOLERANCE = 2;
-    const LEAVE_DISTANCE = 50;
     const footPos = rocket.getFootPosition();
 
     // Determine current island under rocket.
@@ -39,35 +38,8 @@ export default class IslandManager {
       }
     }
 
-    const lastIsland = this.lastLandedMap.get(rocket);
-
-    // If currently over landing line and stationary, consider snap after delay.
-    if (landedIsland && rocket.isStationary()) {
-      const candidate = this.candidateMap.get(rocket);
-      if (!candidate || candidate.island !== landedIsland) {
-        this.candidateMap.set(rocket, { island: landedIsland, elapsed: deltaMs });
-      } else {
-        candidate.elapsed += deltaMs;
-        if (candidate.elapsed >= 500) {
-          if (landedIsland !== lastIsland) {
-            this.snapToIsland(rocket, landedIsland);
-            this.lastLandedMap.set(rocket, landedIsland);
-          }
-          this.candidateMap.delete(rocket);
-        } else {
-          this.candidateMap.set(rocket, candidate);
-        }
-      }
-    } else {
-      // Not a landing candidate anymore
-      this.candidateMap.delete(rocket);
-    }
-
-    if (!landedIsland && lastIsland) {
-      const [a, b] = lastIsland.getLandingLine();
-      if (distancePointToSegment(footPos, a, b) > LEAVE_DISTANCE) {
-        this.lastLandedMap.delete(rocket);
-      }
+    if (landedIsland && rocket.isStationary() && rocket.isIdle()) {
+      this.snapToIsland(rocket, landedIsland);
     }
   }
 

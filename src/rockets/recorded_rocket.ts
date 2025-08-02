@@ -4,7 +4,7 @@ import { Rocket } from "./rocket";
 import Landable from "../game_objects/Landable";
 import Vector2 = Phaser.Math.Vector2;
 
-export default class RecordedRocket implements Landable {
+export default class RecordedRocketController implements Landable {
   private rocket: Rocket;
   private recordedInputs: RecordedInput[];
   private currentRecordedInputIndex = 0;
@@ -27,5 +27,9 @@ export default class RecordedRocket implements Landable {
 
   public getRocket(): Rocket {
     return this.rocket;
+  }
+
+  public isIdle(): boolean {
+    return false;
   }
 }
