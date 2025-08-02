@@ -1,0 +1,154 @@
+{ "frames": {
+   "0": {
+    "frame": { "x": 521, "y": 422, "w": 259, "h": 111 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 109 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "1": {
+    "frame": { "x": 261, "y": 430, "w": 259, "h": 111 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 109 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "2": {
+    "frame": { "x": 1, "y": 468, "w": 259, "h": 111 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 109 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "3": {
+    "frame": { "x": 521, "y": 534, "w": 259, "h": 111 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 109 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "4": {
+    "frame": { "x": 261, "y": 542, "w": 259, "h": 111 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 109 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "5": {
+    "frame": { "x": 1, "y": 345, "w": 259, "h": 122 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 58, "w": 257, "h": 120 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "6": {
+    "frame": { "x": 521, "y": 289, "w": 259, "h": 132 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 48, "w": 257, "h": 130 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "7": {
+    "frame": { "x": 261, "y": 161, "w": 259, "h": 139 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 41, "w": 257, "h": 137 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "8": {
+    "frame": { "x": 521, "y": 1, "w": 259, "h": 143 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 37, "w": 257, "h": 141 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "9": {
+    "frame": { "x": 521, "y": 145, "w": 259, "h": 143 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 37, "w": 257, "h": 141 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "10": {
+    "frame": { "x": 1, "y": 210, "w": 259, "h": 134 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 46, "w": 257, "h": 132 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "11": {
+    "frame": { "x": 261, "y": 301, "w": 259, "h": 128 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 59, "w": 257, "h": 126 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "12": {
+    "frame": { "x": 261, "y": 1, "w": 259, "h": 159 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 157 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "13": {
+    "frame": { "x": 1, "y": 1, "w": 259, "h": 208 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 206 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "14": {
+    "frame": { "x": 1, "y": 580, "w": 259, "h": 111 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 109 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   },
+   "15": {
+    "frame": { "x": 521, "y": 646, "w": 259, "h": 111 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 33, "y": 69, "w": 257, "h": 109 },
+    "sourceSize": { "w": 320, "h": 320 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-dev",
+  "image": "sprite_island_lake.png",
+  "format": "RGBA8888",
+  "size": { "w": 781, "h": 758 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Idle", "from": 0, "to": 15, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "Layer 4", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 2", "opacity": 41, "blendMode": "normal" },
+   { "name": "Flattened", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 3", "opacity": 255, "blendMode": "normal" },
+   { "name": "Platform", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 5", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 6", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

@@ -25,6 +25,7 @@ class MyGame extends Phaser.Scene {
   private islandManager: IslandManager;
   private lastSpawnPoint?: Vector2Like = null;
   private allowCameraMovement = false;
+  private debugEnabled = false;
 
   constructor() {
     super();
@@ -156,7 +157,7 @@ const config = {
         isFixed: true,
         fps: TARGET_FRAMERATE,
       },
-      debug: true, // Uncomment to see physics shapes
+      // debug: true, // Uncomment to see physics shapes
     },
   },
   scale: {
