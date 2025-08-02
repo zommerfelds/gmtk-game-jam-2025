@@ -27,7 +27,7 @@ class MyGame extends Phaser.Scene {
   private islandManager: IslandManager;
   private lastSpawnPoint?: Vector2Like = null;
   private allowCameraMovement = false;
-  private debugEnabled = false;
+  private prevRightTriggerPressed = false;
 
   constructor() {
     super();
@@ -67,8 +67,39 @@ class MyGame extends Phaser.Scene {
   }
 
   update() {
-    const yAxis = this.cursors.up?.isDown ? 1.0 : this.cursors.down?.isDown ? -1.0 : 0;
-    const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
+    const pad = this.input.gamepad?.total ? this.input.gamepad.getPad(0) : null;
+    const joystickThreshold = 0.1;
+
+    let yAxisKeyboard = this.cursors.up?.isDown ? 1.0 : this.cursors.down?.isDown ? -1.0 : 0;
+    let xAxisKeyboard = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
+    let yAxisJoystick = 0;
+    let xAxisJoystick = 0;
+    let triggerAxisGamepad = 0;
+
+    if (pad) {
+      const axisX = pad.axes.length > 0 ? pad.axes[0].getValue() : 0;
+      if (Math.abs(axisX) > joystickThreshold) {
+        xAxisJoystick = axisX;
+      }
+      const axisY = pad.axes.length > 1 ? pad.axes[1].getValue() : 0;
+      if (Math.abs(axisY) > joystickThreshold) {
+        yAxisJoystick = -axisY;
+      }
+
+      if (pad.buttons.length > 6 && pad.buttons[6].value > joystickThreshold) {
+        triggerAxisGamepad = -1.0;
+      } else if (pad.buttons.length > 7 && pad.buttons[7].value > joystickThreshold) {
+        triggerAxisGamepad = 1.0;
+      }
+    }
+    const rightTriggerPressed = pad
+      ? pad.buttons.length > 7 && pad.buttons[7].value > joystickThreshold
+      : false;
+    const rightTriggerJustDown = rightTriggerPressed && !this.prevRightTriggerPressed;
+    this.prevRightTriggerPressed = rightTriggerPressed;
+    const spawnPressed =
+      this.cursors.space?.isDown ||
+      (pad ? pad.buttons.length > 0 && pad.buttons[0].pressed : false);
 
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
       if (this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0) {
@@ -81,15 +112,19 @@ class MyGame extends Phaser.Scene {
       this.allowCameraMovement = false;
       this.lastSpawnPoint = null;
     } else if (this.playerRocketController) {
+      let xAxis = xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard;
+      let yAxis = triggerAxisGamepad !== 0 ? triggerAxisGamepad : yAxisKeyboard;
       this.playerRocketController.applyInput(xAxis, yAxis);
     } else {
-      if (Phaser.Input.Keyboard.JustDown(this.tabKey)) {
+      if (Phaser.Input.Keyboard.JustDown(this.tabKey) || rightTriggerJustDown) {
         this.islandManager.selectNextSpawnerIsland();
         const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         const cam = this.cameras.main;
         if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
         this.cameras.main.pan(spawn.x, spawn.y, 500, "Sine.easeInOut");
       }
+      let xAxis = xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard;
+      let yAxis = yAxisJoystick !== 0 ? yAxisJoystick : yAxisKeyboard;
       if (!this.allowCameraMovement) {
         if (xAxis === 0 && yAxis === 0) {
           this.allowCameraMovement = true;
@@ -102,7 +137,7 @@ class MyGame extends Phaser.Scene {
         cam.scrollY -= yAxis * CAMERA_SCROLL_SPEED;
       }
 
-      if (this.cursors.space?.isDown) {
+      if (spawnPressed) {
         this.lastSpawnPoint = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         console.log("Spawn point: " + this.lastSpawnPoint.x + " " + this.lastSpawnPoint.y);
         this.playerRocketController = new PlayerRocketController(
@@ -171,7 +206,7 @@ const config = {
   physics: {
     default: "matter",
     matter: {
-      gravity: { x: 0, y: 0 },
+      gravity: { x: 0, y: 0.1 },
       runner: {
         // Use fixed time step for reproducible physics. However this means that the speed of the game
         // will be tied to the frame rate.
@@ -180,6 +215,9 @@ const config = {
       },
       debug: true, // Uncomment to see physics shapes
     },
+  },
+  input: {
+    gamepad: true,
   },
   scale: {
     mode: Phaser.Scale.FIT,
