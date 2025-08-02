@@ -61,8 +61,14 @@ export default class ReversibleRocket implements Rocket {
           }
           if (shouldExplode) {
             this.isDestroyed = true;
-            // TODO: Play explosion animation.
+            const positionX = this.sprite.x;
+            const positionY = this.sprite.y;
             this.sprite.destroy(true);
+
+            // Play explosion animation.
+            const explosion= scene.add.sprite(positionX, positionY, "effect_explosion");
+            scene.anims.createFromAseprite("effect_explosion", undefined, explosion);
+            explosion.play({ key: "Idle", repeat: 0 }, true);
             onRocketDestroyed(this);
           }
         }
