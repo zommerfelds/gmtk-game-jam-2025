@@ -62,9 +62,8 @@ class MyGame extends Phaser.Scene {
 
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
       if (this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0) {
-        this.playerRocketController.getRocket().explode(this, () => {
-          this.cameras.main.stopFollow();
-        });
+        this.playerRocketController.getRocket().explode();
+        this.cameras.main.stopFollow();
       } else {
         this.recordedRockets.push(this.playerRocketController.finishRecording());
       }

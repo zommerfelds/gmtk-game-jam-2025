@@ -5,6 +5,7 @@ import Vector2 = Phaser.Math.Vector2;
 import * as Phaser from "phaser";
 import CollisionStartEvent = Phaser.Physics.Matter.Events.CollisionStartEvent;
 import {GoodsType} from "../islands/goods";
+import Sprite = Phaser.GameObjects.Sprite;
 
 const MAX_TORQUE = 0.005;
 const MAX_FORWARDS_ACCELERATION = 0.0005;
@@ -13,12 +14,14 @@ const MAX_BACKWARDS_ACCELERATION = 0.00025;
 export default class ReversibleRocket implements Rocket {
   private readonly sprite: Phaser.Physics.Matter.Sprite;
   private readonly footLocal: Vector2;
+  private readonly scene: Phaser.Scene;
 
   private idle = true;
   private isDestroyed = false;
   private linearVelocityAbs: number = 0;
   private angularVelocityAbs: number = 0;
   private loadedGood: GoodsType = GoodsType.NONE;
+  private goodsSprite?: Sprite = null;
 
   constructor(
     scene: Phaser.Scene,
@@ -26,6 +29,7 @@ export default class ReversibleRocket implements Rocket {
     initialY: number,
     onRocketDestroyed: (r: Rocket) => void,
   ) {
+    this.scene = scene;
     this.sprite = scene.matter.add.sprite(initialX, initialY, "rocket");
     scene.anims.createFromAseprite("rocket", undefined, this.sprite);
 
@@ -59,12 +63,14 @@ export default class ReversibleRocket implements Rocket {
           }
           if (bodyA.label == "rocket" && bodyB.label == "rocket") {
             // Two rockets colliding always explode each rocket.
-            this.explode(scene, onRocketDestroyed);
+            this.explode();
+            onRocketDestroyed(this);
           } else {
             console.log("angular:", 15 * this.angularVelocityAbs, "linear", this.linearVelocityAbs);
             const combinedVelocity = 15 * this.angularVelocityAbs + this.linearVelocityAbs;
             if (combinedVelocity > 0.8) {
-              this.explode(scene, onRocketDestroyed);
+              this.explode();
+              onRocketDestroyed(this);
             }
           }
         }
@@ -121,6 +127,7 @@ export default class ReversibleRocket implements Rocket {
       return false;
     }
     this.loadedGood = good;
+    // TODO: Add sprite for stored good.
     return true;
   }
 
@@ -129,23 +136,23 @@ export default class ReversibleRocket implements Rocket {
       return false;
     }
     this.loadedGood = GoodsType.NONE;
+    // TODO: Remove sprite for stored good.
     return true;
   }
 
-  public explode(scene: Phaser.Scene, onRocketDestroyed: (r: Rocket) => void) {
+  public explode() {
     this.isDestroyed = true;
     const positionX = this.sprite.x;
     const positionY = this.sprite.y;
     this.sprite.destroy(true);
 
     // Play explosion animation.
-    const explosion = scene.add.sprite(positionX, positionY, "effect_explosion");
-    scene.anims.createFromAseprite("effect_explosion", undefined, explosion);
+    const explosion = this.scene.add.sprite(positionX, positionY, "effect_explosion");
+    this.scene.anims.createFromAseprite("effect_explosion", undefined, explosion);
     explosion.play({ key: "Idle", repeat: 0 }, true);
     setTimeout(() => {
       explosion.destroy(true);
     }, 10_000);
-    onRocketDestroyed(this);
   }
 
   public getFootPosition(): Vector2 {

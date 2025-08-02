@@ -24,7 +24,7 @@ export interface Rocket extends Landable {
    */
   applyInput(x: number, y: number): void;
 
-  explode(scene: Phaser.Scene, onRocketDestroyed: (r: Rocket) => void): void;
+  explode(): void;
 
   /**
    * Attempts to store the given good into the rocket. May fail if the rocket is already full.
