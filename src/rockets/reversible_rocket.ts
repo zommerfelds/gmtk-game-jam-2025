@@ -4,6 +4,7 @@ import { setPolygonBody } from "../utils/polygon_body";
 import Vector2 = Phaser.Math.Vector2;
 import * as Phaser from "phaser";
 import CollisionStartEvent = Phaser.Physics.Matter.Events.CollisionStartEvent;
+import {GoodsType} from "../islands/goods";
 
 const MAX_TORQUE = 0.005;
 const MAX_FORWARDS_ACCELERATION = 0.0005;

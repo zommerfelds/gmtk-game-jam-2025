@@ -1,4 +1,4 @@
-enum GoodsType {
+export enum GoodsType {
   NONE,
   CACTUS,
   WATER,
