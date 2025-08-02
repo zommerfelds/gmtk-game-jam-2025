@@ -2,9 +2,7 @@ import "phaser";
 import PlayerRocket from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
 import RecordedRocket from "./rockets/recorded_rocket";
-import { distancePointToSegment } from "./utils/geometry";
-import Island from "./islands/island";
-import IslandIreland from "./islands/island_ireland";
+import IslandManager from "./islands/island_manager";
 import Text = Phaser.GameObjects.Text;
 
 const TARGET_FRAMERATE = 60;
@@ -21,9 +19,7 @@ class MyGame extends Phaser.Scene {
   private cycleWhenRecordingStarted = 0;
   private recordingText: Text;
   private landingStatusText: Text;
-  private landingLine: Phaser.Math.Vector2[];
-  private rocketFootPoint: Phaser.GameObjects.Arc;
-  private mainIsland: Island;
+  private islandManager: IslandManager;
 
   constructor() {
     super();
@@ -42,16 +38,10 @@ class MyGame extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.mainIsland = new IslandIreland(this, 400, 400);
+    this.islandManager = new IslandManager(this);
     this.cycleText = this.add.text(5, 5, "").setScrollFactor(0);
     this.recordingText = this.add.text(500, 5, "").setScrollFactor(0);
     this.landingStatusText = this.add.text(5, 30, "").setScrollFactor(0);
-
-    // Temp: draw spawn point and rocket foot. Romve once no longer needed.
-    this.landingLine = this.mainIsland.getLandingLine();
-    this.add.circle(this.landingLine[0].x, this.landingLine[0].y, 5, 0x0000ff, 1);
-    this.add.circle(this.landingLine[1].x, this.landingLine[1].y, 5, 0x0000ff, 1);
-    this.rocketFootPoint = this.add.circle();
   }
 
   update() {
@@ -63,7 +53,7 @@ class MyGame extends Phaser.Scene {
       const xAxis = this.cursors.right?.isDown ? 1.0 : this.cursors.left?.isDown ? -1.0 : 0;
       this.playerRocket.applyInput(xAxis, yAxis);
     } else if (this.cursors.space?.isDown) {
-      const spawnPoint = this.mainIsland.getSpawnPoint();
+      const spawnPoint = this.islandManager.getMainIsland().getSpawnPoint();
       console.log("Spawn point: " + spawnPoint.x + " " + spawnPoint.y);
       this.playerRocket = new PlayerRocket(
         new ReversibleRocket(this, spawnPoint.x, spawnPoint.y),
@@ -72,12 +62,10 @@ class MyGame extends Phaser.Scene {
       );
     }
 
-    if (this.playerRocket && this.landingLine) {
-      const pos = this.playerRocket.getFootPosition();
-      this.rocketFootPoint.setPosition(pos.x, pos.y);
-      const distance = distancePointToSegment(pos, this.landingLine[0], this.landingLine[1]);
+    if (this.playerRocket) {
+      const landed = this.islandManager.checkLandingStatus(this.playerRocket);
       this.landingStatusText?.setText(
-        distance < 3 ? "Landing status: The Eagle has landed" : "Landing status: outer space",
+        landed ? "Landing status: The Eagle has landed" : "Landing status: outer space",
       );
     } else {
       this.landingStatusText?.setText("Landing status: outer space");
