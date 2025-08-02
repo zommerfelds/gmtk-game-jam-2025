@@ -28,8 +28,9 @@ class MyGame extends Phaser.Scene {
   preload() {
     this.load.path = "assets/";
     this.load_sprite("rocket");
-    this.load_sprite("island_ireland");
+    this.load_sprite("island_cacti");
     this.load_sprite("island_doom");
+    this.load_sprite("island_ireland");
   }
 
   load_sprite(name: string) {
