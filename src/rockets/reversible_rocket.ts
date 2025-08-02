@@ -116,6 +116,10 @@ export default class ReversibleRocket implements Rocket {
     } else {
       this.sprite.play({ key: "Idle", repeat: -1 }, true);
     }
+
+    if (this.goodsSprite) {
+      this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
+    }
   }
 
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
@@ -132,7 +136,7 @@ export default class ReversibleRocket implements Rocket {
       return false;
     }
     this.loadedGood = good;
-    // TODO: Add sprite for stored good.
+    this.goodsSprite = this.scene.add.sprite(this.sprite.x, this.sprite.y, good);
     return true;
   }
 
@@ -141,7 +145,8 @@ export default class ReversibleRocket implements Rocket {
       return false;
     }
     this.loadedGood = GoodsType.NONE;
-    // TODO: Remove sprite for stored good.
+    this.goodsSprite.destroy(true);
+    this.goodsSprite = null;
     return true;
   }
 
@@ -150,6 +155,7 @@ export default class ReversibleRocket implements Rocket {
     const positionX = this.sprite.x;
     const positionY = this.sprite.y;
     this.sprite.destroy(true);
+    this.goodsSprite?.destroy(true);
 
     // Play explosion animation.
     const explosion = this.scene.add.sprite(positionX, positionY, "effect_explosion");

@@ -40,6 +40,7 @@ class MyGame extends Phaser.Scene {
     this.load_sprite("island_ireland");
     this.load_sprite("island_skull");
     this.load_sprite("effect_explosion", /* skipCollision= */ true);
+    this.load_sprite("icon_cactus");
   }
 
   load_sprite(name: string, skipCollision: boolean = false) {

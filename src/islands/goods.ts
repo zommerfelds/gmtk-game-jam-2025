@@ -1,6 +1,6 @@
 export enum GoodsType {
-  NONE,
-  CACTUS,
-  WATER,
-  LAVA,
+  NONE= "",
+  CACTUS = "icon_cactus",
+  WATER = "icon_water",
+  LAVA = "icon_lava",
 }
