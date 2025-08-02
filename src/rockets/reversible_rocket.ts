@@ -4,7 +4,7 @@ import { setPolygonBody } from "../utils/polygon_body";
 import Vector2 = Phaser.Math.Vector2;
 import * as Phaser from "phaser";
 import CollisionStartEvent = Phaser.Physics.Matter.Events.CollisionStartEvent;
-import {GoodsType} from "../islands/goods";
+import { GoodsType } from "../islands/goods";
 import Sprite = Phaser.GameObjects.Sprite;
 
 const MAX_TORQUE = 0.005;
@@ -69,7 +69,7 @@ export default class ReversibleRocket implements Rocket {
           } else {
             console.log("angular:", 15 * this.angularVelocityAbs, "linear", this.linearVelocityAbs);
             const combinedVelocity = 15 * this.angularVelocityAbs + this.linearVelocityAbs;
-            if (combinedVelocity > 0.8) {
+            if (combinedVelocity > 1.5) {
               this.explode();
               onRocketDestroyed(this);
             }
