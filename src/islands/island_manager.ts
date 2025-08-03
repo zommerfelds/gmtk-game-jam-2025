@@ -40,7 +40,7 @@ export default class IslandManager {
     new Obstacle(scene, -200, 400, "obstacle_meteor", 150);
     new Obstacle(scene, -215, 555, "obstacle_meteor", 220);
 
-    new Obstacle(scene, 1600, 500, "obstacle_meteor", 0);
+    new Obstacle(scene, 1600, 500, "obstacle_meteor_2", 0);
     new Obstacle(scene, 1700, 200, "obstacle_meteor", 30);
     new Obstacle(scene, 1500, 400, "obstacle_meteor", 150);
     new Obstacle(scene, 1515, 555, "obstacle_meteor", 220);
