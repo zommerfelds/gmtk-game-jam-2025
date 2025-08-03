@@ -47,10 +47,10 @@ export default class PlayScene extends Phaser.Scene {
     this.inputHandler.update();
 
     this.recordedRockets.forEach(recordedRocket => {
-      this.islandManager.checkLandingStatus(recordedRocket);
+      this.islandManager.checkLandingStatus(recordedRocket, /* isPlayerRocket= */ false);
     });
     if (this.playerRocketController) {
-      this.islandManager.checkLandingStatus(this.playerRocketController);
+      this.islandManager.checkLandingStatus(this.playerRocketController, /* isPlayerRocket= */ true);
     }
 
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {

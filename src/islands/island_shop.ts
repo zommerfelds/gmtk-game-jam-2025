@@ -17,6 +17,7 @@ export default class IslandShop extends Island {
   private helpText?: Phaser.GameObjects.Text;
   private suppliedCountdown: number = -1;
   private additionalHelpText = "";
+  private rocketPresent = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -34,13 +35,12 @@ export default class IslandShop extends Island {
     this.getSprite().play({ key: "Closed", repeat: -1 });
   }
 
-  interactWithRocket(rocket: Rocket) {
-    super.interactWithRocket(rocket);
+  interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
+    super.interactWithRocket(rocket, isPlayerRocket);
     if (rocket.tryTakeGood(this.good)) {
       this.getSprite().play({ key: "Open", repeat: -1 });
       this.suppliedCountdown = CYCLE_STEPS;
-    } else {
-      // TODO: currently this is shown for all rockets, even recorded rockets.
+    } else if (isPlayerRocket) {
       if (!this.helpText) {
         const text = `Hey! I'm out of ${this.getGoodName()}!\nCould you create a supply loop for me?${
           this.additionalHelpText
@@ -53,13 +53,12 @@ export default class IslandShop extends Island {
           })
           .setOrigin(0.5, 0.5)
           .setScrollFactor(0);
-
-        setTimeout(() => {
-          this.helpText?.destroy();
-          this.helpText = undefined;
-        }, 7000);
       }
     }
+  }
+  
+  rocketStillOnIsland() {
+    this.rocketPresent = true;
   }
 
   getGoodName(): string {
@@ -80,6 +79,11 @@ export default class IslandShop extends Island {
     if (!this.isHappy()) {
       this.getSprite().play({ key: "Closed", repeat: -1 }, true);
     }
+    if (!this.rocketPresent) {
+      this.helpText?.destroy();
+      this.helpText = undefined;
+    }
+    this.rocketPresent = false;
   }
 
   isGoalToBeHappy(): boolean {

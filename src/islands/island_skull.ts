@@ -17,8 +17,8 @@ export default class IslandSkull extends Island {
     this.targetFramerate = targetFramerate;
   }
 
-  interactWithRocket(rocket: Rocket) {
-    super.interactWithRocket(rocket);
+  interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
+    super.interactWithRocket(rocket, isPlayerRocket);
     if (rocket.tryTakeGood(GoodsType.CACTUS)) {
       this.hasCactusCountdown = this.cycleSteps;
     }

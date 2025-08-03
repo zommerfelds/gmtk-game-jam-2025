@@ -76,7 +76,7 @@ export default class IslandManager {
     this.selectedSpawnerIsland = available[nextIndex];
   }
 
-  checkLandingStatus(landable: Landable) {
+  checkLandingStatus(landable: Landable, isPlayerRocket: boolean) {
     const TOLERANCE = 3;
     const footPos = landable.getRocket().getFootPosition();
 
@@ -93,9 +93,10 @@ export default class IslandManager {
     if (landingIsland && landable.isReadyToLand()) {
       if (!landable.isLanded()) {
         landable.land();
-        landingIsland.interactWithRocket(landable.getRocket());
+        landingIsland.interactWithRocket(landable.getRocket(), isPlayerRocket);
       }
       this.snapToIsland(landable.getRocket(), landingIsland);
+      landingIsland.rocketStillOnIsland();
     }
   }
 
