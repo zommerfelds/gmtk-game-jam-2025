@@ -184,6 +184,10 @@ export default abstract class BaseRocket implements Rocket {
     return true;
   }
 
+  public destroy() {
+    // To be overridden by subclasses.
+  }
+
   public explode() {
     if (this.isDestroyed) return;
     this.isDestroyed = true;
@@ -201,6 +205,7 @@ export default abstract class BaseRocket implements Rocket {
     }, 10_000);
 
     this.onRocketDestroyed(this);
+    this.destroy();
   }
 
   public getFootPosition(): Vector2 {
