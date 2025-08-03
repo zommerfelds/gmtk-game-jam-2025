@@ -32,7 +32,7 @@ export default class IslandManager {
       new SpawnerIsland(scene, 400, 400, true, onSpawnerDiscovered, OminRocket),
       new SpawnerIsland(scene, 1500, 0, false, onSpawnerDiscovered, ReversibleRocket),
       new SpawnerIsland(scene, -800, -700, false, onSpawnerDiscovered, ReversibleRocket),
-      new SpawnerIsland(scene, 800, 1900, true, onSpawnerDiscovered, ReversibleRocket),
+      new SpawnerIsland(scene, 800, 1900, false, onSpawnerDiscovered, ReversibleRocket),
     ];
 
     // scene.add.text(-300, 200, "<- shop this way");
