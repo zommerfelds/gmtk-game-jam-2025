@@ -20,7 +20,7 @@ export default class IslandManager {
   private readonly undiscoveredSpawnerIslands: Set<SpawnerIsland> = new Set();
   private selectedSpawnerIsland: SpawnerIsland;
 
-  constructor(scene: Phaser.Scene, cycleSteps: number, targetFramerate: number) {
+  constructor(scene: Phaser.Scene) {
     const onSpawnerDiscovered = (spawner: SpawnerIsland) => {
       this.discoveredSpawnerIslands.add(spawner);
       this.undiscoveredSpawnerIslands.delete(spawner);
@@ -42,7 +42,7 @@ export default class IslandManager {
         "There is a farm just above here.",
       ),
       new IslandDoom(scene, 1300, 1000),
-      new IslandSkull(scene, 1000, 1000, cycleSteps, targetFramerate),
+      new IslandSkull(scene, 1000, 1000),
       // new IslandCave(scene, 700, 300),
       new Island(scene, 1400, 1200, "island_lake"),
       new IslandShop(scene, -500, 300, ShopColor.BLUE, GoodsType.LAVA),

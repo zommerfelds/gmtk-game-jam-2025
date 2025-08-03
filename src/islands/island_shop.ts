@@ -69,7 +69,7 @@ export default class IslandShop extends Island {
   getGoodName(): string {
     switch (this.good) {
       case GoodsType.CACTUS:
-        return "cactus";
+        return "cacti";
       case GoodsType.LAVA:
         return "lava";
       case GoodsType.WATER:
