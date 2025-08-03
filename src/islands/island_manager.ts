@@ -32,6 +32,8 @@ export default class IslandManager {
       new SpawnerIsland(scene, 1500, 0, false, onSpawnerDiscovered, ReversibleRocket),
     ];
 
+    scene.add.text(-300, 200, "<- shop this way");
+
     this.islands = [
       new IslandCacti(scene, 1100, 100),
       new IslandShop(
@@ -42,11 +44,12 @@ export default class IslandManager {
         GoodsType.CACTUS,
         "There is a farm just above here.",
       ),
-      new IslandDoom(scene, 1300, 1000),
-      new IslandSkull(scene, 1000, 1000),
+      new IslandDoom(scene, 100, -500),
+      new IslandSkull(scene, -600, 1000),
       // new IslandCave(scene, 700, 300),
       new IslandLake(scene, 1400, 1200),
-      new IslandShop(scene, -500, 300, ShopColor.BLUE, GoodsType.LAVA),
+      new IslandShop(scene, -800, 300, ShopColor.BLUE, GoodsType.LAVA),
+      new IslandShop(scene, 1200, 900, ShopColor.BLUE, GoodsType.LAVA),
       ...spawnerIslands,
     ];
 
