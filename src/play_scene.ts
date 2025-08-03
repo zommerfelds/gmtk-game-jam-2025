@@ -10,6 +10,7 @@ import Vector2Like = Phaser.Types.Math.Vector2Like;
 import InputHandler from "./utils/input_handler";
 import { preloadAssets, prepareAssets } from "./utils/asset_loader";
 import { TARGET_FRAMERATE, CYCLE_SECONDS, CYCLE_STEPS } from "./constants";
+import { createBackground } from "./utils/background";
 
 export default class PlayScene extends Phaser.Scene {
   private inputHandler: InputHandler;
@@ -32,45 +33,13 @@ export default class PlayScene extends Phaser.Scene {
 
   create() {
     prepareAssets(this);
-    this.createBackgroundLayer("background", 0.1, 0.1, 0.5);
-    this.createBackgroundLayer("background", 0.2, 0.3, 0.5);
-    this.createBackgroundLayer("background", 0.3, 0.5, 0.5);
+    createBackground(this, "background");
 
     this.inputHandler = new InputHandler(this);
     this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
     const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
     this.cameras.main.centerOn(spawn.x, spawn.y);
     this.ui = new GameUI(this);
-  }
-
-  private createBackgroundLayer(
-    textureKey: string,
-    scrollFactor: number,
-    alpha: number,
-    scale: number,
-  ) {
-    // Note: tileSprite would be more efficient and unlimited in size,
-    // but can't rotate/flip tiles randomly.
-    const texture = this.textures.get(textureKey);
-    const tileSize = texture.getSourceImage().width;
-    const RANGE = tileSize * 10;
-
-    const container = this.add
-      .container(0, 0)
-      .setScrollFactor(scrollFactor)
-      .setAlpha(alpha)
-      .setDepth(-100)
-      .setScale(scale);
-
-    for (let x = -RANGE; x < RANGE; x += tileSize) {
-      for (let y = -RANGE; y < RANGE; y += tileSize) {
-        const tile = this.add.image(x, y, textureKey).setOrigin(0);
-        tile.setFlipX(Math.random() < 0.5);
-        tile.setFlipY(Math.random() < 0.5);
-        tile.setAngle(90 * Phaser.Math.Between(0, 3));
-        container.add(tile);
-      }
-    }
   }
 
   update() {
