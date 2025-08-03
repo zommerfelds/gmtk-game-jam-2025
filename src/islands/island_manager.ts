@@ -102,6 +102,6 @@ export default class IslandManager {
   private snapToIsland(rocket: Rocket, island: Island) {
     const [a, b] = island.getLandingLine();
     const midpoint = new Phaser.Math.Vector2((a.x + b.x) * 0.5, (a.y + b.y) * 0.5);
-    rocket.setPositionAndRotation(midpoint, 0);
+    rocket.setFootPositionZeroRotation(midpoint);
   }
 }

@@ -24,6 +24,8 @@ export interface Rocket {
    */
   applyInput(x: number, y: number, selfDestructKeyPressed?: boolean): void;
 
+  applyAnimation(xInput: number, yInput: number): void;
+
   explode(): void;
 
   /**
@@ -55,6 +57,9 @@ export interface Rocket {
   getPosition(): Vector2;
 
   getRotation(): number;
+
+  /** Explicitly sets the foot position with 0 rotation, removing any linear or rotational velocity. */
+  setFootPositionZeroRotation(position: Vector2): void;
 
   /** Explicitly sets the position and rotation, removing any linear or rotational velocity. */
   setPositionAndRotation(position: Vector2, rotation: number): void;

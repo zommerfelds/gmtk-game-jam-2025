@@ -18,4 +18,8 @@ export default class OminRocket extends BaseRocket {
   public getRocketControlType(): RocketControlType {
     return RocketControlType.DIRECTIONAL;
   }
+
+  applyAnimation(xInput: number, yInput: number) {
+    // No animation yet.
+  }
 }

@@ -19,6 +19,7 @@ export default class RecordedRocketController implements Landable {
 
     const state = this.recordedStates[this.currentRecordedInputIndex];
     this.rocket.setPositionAndRotation(state.position, state.rotation);
+    this.rocket.applyAnimation(state.inputX, state.inputY);
   }
 
   public isLanded(): boolean {

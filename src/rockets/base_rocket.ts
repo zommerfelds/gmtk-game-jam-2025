@@ -50,7 +50,7 @@ export default abstract class BaseRocket implements Rocket {
       }
       const local = this.sprite.getLocalPoint(lowestVertex.x, lowestVertex.y);
       this.footLocal = new Vector2(0, local.y - this.sprite.height * this.sprite.originY);
-      this.sprite.setPosition(initialX - this.footLocal.x, initialY - this.footLocal.y);
+      this.setFootPositionZeroRotation(new Vector2(initialX, initialY));
     }
 
     body.label = "rocket";
@@ -94,14 +94,12 @@ export default abstract class BaseRocket implements Rocket {
         this.applyDirectionalInput(x, y);
         break;
     }
+    this.applyAnimation(x, y);
 
     this.linearVelocityAbs = new Vector2(this.sprite.getVelocity()).length();
     this.angularVelocityAbs = Math.abs(this.sprite.getAngularVelocity());
 
-    if (this.goodsSprite) {
-      this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
-      this.goodsSprite.setRotation(this.sprite.rotation);
-    }
+    this.updateGoodsSprite();
   }
 
   applyRotationalInput(x: number, y: number) {
@@ -122,14 +120,6 @@ export default abstract class BaseRocket implements Rocket {
     this.sprite.applyForce(appliedForce);
     const body = this.sprite.body as MatterJS.BodyType;
     body.torque += appliedTorque;
-
-    if (appliedAcceleration > 0) {
-      this.sprite.play({ key: "Foreward", repeat: -1 }, true);
-    } else if (appliedAcceleration < 0) {
-      this.sprite.play({ key: "Backward", repeat: -1 }, true);
-    } else {
-      this.sprite.play({ key: "Idle", repeat: -1 }, true);
-    }
   }
 
   applyDirectionalInput(x: number, y: number) {
@@ -146,12 +136,28 @@ export default abstract class BaseRocket implements Rocket {
     this.sprite.applyForce(appliedForce);
   }
 
-  public setPositionAndRotation(finalPosition: Vector2, finalRotation: number) {
+  abstract applyAnimation(xInput: number, yInput: number): void;
+
+  public setFootPositionZeroRotation(finalPosition: Vector2) {
     this.sprite.setPosition(finalPosition.x - this.footLocal.x, finalPosition.y - this.footLocal.y);
-    this.sprite.setRotation(finalRotation);
+    this.sprite.setRotation(0);
+    this.resetAllVelocity();
+    this.updateGoodsSprite();
+  }
+
+  public setPositionAndRotation(position: Vector2, rotation: number) {
+    this.sprite.setPosition(position.x, position.y);
+    this.sprite.setRotation(rotation);
+    this.resetAllVelocity();
+    this.updateGoodsSprite();
+  }
+
+  private resetAllVelocity() {
     this.sprite.setVelocity(0, 0);
     this.sprite.setAngularVelocity(0);
+  }
 
+  private updateGoodsSprite() {
     if (this.goodsSprite) {
       this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
       this.goodsSprite.setRotation(this.sprite.rotation);

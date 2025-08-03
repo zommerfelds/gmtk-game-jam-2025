@@ -5,4 +5,6 @@ export default interface RecordedState {
   rotation: number;
   isReadyToLand: boolean;
   isLanded: boolean;
+  inputX: number; // Just for animations.
+  inputY: number; // Just for animations.
 }
