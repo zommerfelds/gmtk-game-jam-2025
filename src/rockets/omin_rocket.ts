@@ -40,4 +40,11 @@ export default class OminRocket extends BaseRocket {
       this.sprite.play({ key: "Down-Left", repeat: -1 }, true);
     }
   }
+
+  protected updateGoodsSprite() {
+    if (this.goodsSprite) {
+      this.goodsSprite.setPosition(this.sprite.x, this.sprite.y + 5, this.sprite.z, this.sprite.w);
+      this.goodsSprite.setRotation(this.sprite.rotation);
+    }
+  }
 }

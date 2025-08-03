@@ -22,7 +22,7 @@ export default abstract class BaseRocket implements Rocket {
   private linearVelocityAbs: number = 0;
   private angularVelocityAbs: number = 0;
   private loadedGood: GoodsType = GoodsType.NONE;
-  private goodsSprite?: Sprite = null;
+  protected goodsSprite?: Sprite = null;
 
   constructor(
     scene: Phaser.Scene,
@@ -157,7 +157,7 @@ export default abstract class BaseRocket implements Rocket {
     this.sprite.setAngularVelocity(0);
   }
 
-  private updateGoodsSprite() {
+  protected updateGoodsSprite() {
     if (this.goodsSprite) {
       this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
       this.goodsSprite.setRotation(this.sprite.rotation);
