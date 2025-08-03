@@ -225,6 +225,25 @@ export default abstract class BaseRocket implements Rocket {
   }
 
   followWithCamera(camera: Phaser.Cameras.Scene2D.Camera) {
-    camera.startFollow(this.sprite);
+    camera.pan(
+      this.sprite.x,
+      this.sprite.y,
+      500,
+      "Sine.easeInOut",
+      true, // Force immediately
+      (camera, progress) => { // Callback function
+        // Update the camera's pan target to the player's current position
+        if (!this.isDestroyed) {
+          camera.panEffect.destination.x = this.sprite.x;
+          camera.panEffect.destination.y = this.sprite.y;
+
+          // Optional: You can also include a check for when the pan is complete (progress === 1)
+          // and execute additional logic if needed.
+          if (progress === 1) {
+            camera.startFollow(this.sprite, true);
+          }
+        }
+      }
+    );
   }
 }

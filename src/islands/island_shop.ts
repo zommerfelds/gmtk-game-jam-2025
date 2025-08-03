@@ -45,7 +45,7 @@ export default class IslandShop extends Island {
     if (rocket.tryTakeGood(this.good)) {
       this.getSprite().play({ key: "Open", repeat: -1 });
       this.suppliedCountdown = CYCLE_STEPS;
-    } else if (isPlayerRocket) {
+    } else if (isPlayerRocket && !this.isHappy()) {
       if (!this.helpText) {
         const text = `Hey! I'm out of ${this.getGoodName()}!\nCould you create a supply loop for me?${
           this.additionalHelpText
