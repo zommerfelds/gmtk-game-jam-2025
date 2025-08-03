@@ -31,9 +31,11 @@ export default class IslandManager {
     const spawnerIslands: SpawnerIsland[] = [
       new SpawnerIsland(scene, 400, 400, true, onSpawnerDiscovered, OminRocket),
       new SpawnerIsland(scene, 1500, 0, false, onSpawnerDiscovered, ReversibleRocket),
+      new SpawnerIsland(scene, -800, -700, false, onSpawnerDiscovered, ReversibleRocket),
+      new SpawnerIsland(scene, 800, 1900, true, onSpawnerDiscovered, ReversibleRocket),
     ];
 
-    scene.add.text(-300, 200, "<- shop this way");
+    // scene.add.text(-300, 200, "<- shop this way");
 
     new Obstacle(scene, -100, 500, "obstacle_meteor", 0);
     new Obstacle(scene, 0, 200, "obstacle_meteor", 30);
@@ -45,8 +47,34 @@ export default class IslandManager {
     new Obstacle(scene, 1500, 400, "obstacle_meteor", 150);
     new Obstacle(scene, 1515, 555, "obstacle_meteor", 220);
 
+    new Obstacle(scene, 500, 1500, "obstacle_meteor", 0);
+    new Obstacle(scene, 500, 1200, "obstacle_meteor", 30);
+    new Obstacle(scene, 700, 1400, "obstacle_meteor", 150);
+    new Obstacle(scene, 615, 1555, "obstacle_meteor", 220);
+
+    new Obstacle(scene, 500, -1000, "obstacle_meteor", 0);
+    new Obstacle(scene, 500, -1100, "obstacle_meteor", 30);
+    new Obstacle(scene, 700, -1200, "obstacle_meteor", 150);
+    new Obstacle(scene, 615, -1255, "obstacle_meteor", 220);
+
+    new Obstacle(scene, 0, -1000, "obstacle_meteor", 0);
+    new Obstacle(scene, 10, -1100, "obstacle_meteor", 30);
+    new Obstacle(scene, 100, -1200, "obstacle_meteor", 150);
+    new Obstacle(scene, 115, -1255, "obstacle_meteor", 220);
+
+    new Obstacle(scene, -500, -1000, "obstacle_meteor", 0);
+    new Obstacle(scene, -510, -1100, "obstacle_meteor", 30);
+    new Obstacle(scene, -700, -1200, "obstacle_meteor", 150);
+    new Obstacle(scene, -815, -1255, "obstacle_meteor", 220);
+
+    new Obstacle(scene, -300, -500, "obstacle_meteor", 0);
+    new Obstacle(scene, -310, -600, "obstacle_meteor", 30);
+    new Obstacle(scene, -500, -700, "obstacle_meteor", 150);
+    new Obstacle(scene, -615, -655, "obstacle_meteor", 220);
+
     this.islands = [
       new IslandCacti(scene, 1100, 100),
+      new IslandCacti(scene, -750, -450),
       new IslandShop(
         scene,
         800,
@@ -57,10 +85,15 @@ export default class IslandManager {
       ),
       new IslandShop(scene, 1800, 600, ShopColor.RED, GoodsType.CACTUS),
       new IslandShop(scene, 1900, -600, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(scene, -1000, 500, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(scene, -800, 700, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(scene, 400, 1800, ShopColor.RED, GoodsType.CACTUS),
       new IslandShop(scene, -100, 1300, ShopColor.RED, GoodsType.WATER),
-      new IslandShop(scene, 1000, -200, ShopColor.RED, GoodsType.WATER),
+      new IslandShop(scene, 1000, -250, ShopColor.RED, GoodsType.WATER),
       new IslandDoom(scene, 100, -500),
       new IslandSkull(scene, -600, 1000),
+      new IslandSkull(scene, 1800, 1200),
+      new IslandSkull(scene, 1500, -900),
       // new IslandCave(scene, 700, 300),
       new IslandLake(scene, 1400, 1200),
       new IslandShop(scene, -800, 300, ShopColor.BLUE, GoodsType.LAVA),
@@ -69,11 +102,6 @@ export default class IslandManager {
       new IslandShop(scene, -200, 1000, ShopColor.BLUE, GoodsType.LAVA),
       ...spawnerIslands,
     ];
-
-    new Obstacle(scene, 500, 1500, "obstacle_meteor", 0);
-    new Obstacle(scene, 500, 1200, "obstacle_meteor", 30);
-    new Obstacle(scene, 700, 1400, "obstacle_meteor", 150);
-    new Obstacle(scene, 615, 1555, "obstacle_meteor", 220);
 
     const numObstacles = 1000;
     for (let i = 0; i < numObstacles; i++) {
