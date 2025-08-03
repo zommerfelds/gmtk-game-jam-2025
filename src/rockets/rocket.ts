@@ -12,6 +12,16 @@ export enum RocketControlType {
   ROTATIONAL,
 }
 
+// Constructor for a rocket.
+export type RocketClass = {
+  new (
+    scene: Phaser.Scene,
+    initialX: number,
+    initialY: number,
+    onRocketDestroyed: (r: Rocket) => void,
+  ): Rocket;
+};
+
 export interface Rocket {
   getRocketControlType(): RocketControlType;
 

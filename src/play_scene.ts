@@ -92,20 +92,9 @@ export default class PlayScene extends Phaser.Scene {
       if (this.inputHandler.isPrimaryActionButtonJustDown()) {
         this.lastSpawnPoint = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         console.log("Spawn point: " + this.lastSpawnPoint.x + " " + this.lastSpawnPoint.y);
-        const rocket =
-          Math.random() < 0.5
-            ? new ReversibleRocket(
-                this,
-                this.lastSpawnPoint.x,
-                this.lastSpawnPoint.y,
-                this.onRocketDestroyed.bind(this),
-              )
-            : new OminRocket(
-                this,
-                this.lastSpawnPoint.x,
-                this.lastSpawnPoint.y,
-                this.onRocketDestroyed.bind(this),
-              );
+        const rocket = this.islandManager
+          .getSelectedSpawnerIsland()
+          .spawnRocket(this.onRocketDestroyed.bind(this));
         this.playerRocketController = new PlayerRocketController(
           rocket,
           this.cameras.main,
