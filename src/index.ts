@@ -1,6 +1,6 @@
 import "phaser";
 import PlayScene from "./play_scene";
-import { TARGET_FRAMERATE } from "./constants";
+import { SCREEN_HEIGHT, SCREEN_WIDTH, TARGET_FRAMERATE } from "./constants";
 
 const config = {
   type: Phaser.AUTO,
@@ -24,8 +24,8 @@ const config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  width: 1000,
-  height: 600,
+  width: SCREEN_WIDTH,
+  height: SCREEN_HEIGHT,
   zoom: 5,
   pixelArt: true,
   antialias: false,
