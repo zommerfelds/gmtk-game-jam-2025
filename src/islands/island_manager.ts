@@ -97,6 +97,12 @@ export default class IslandManager {
       .map(island => island.getDescriptionToBeHappy());
   }
 
+  getNumHappyIslands(): number {
+    return this.islands
+      .filter(island => island.isGoalToBeHappy() && island.isHappy())
+      .length;
+  }
+
   processCycleStep() {
     this.islands.forEach(island => island.processCycleStep());
   }

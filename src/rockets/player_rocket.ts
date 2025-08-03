@@ -13,6 +13,8 @@ export default class PlayerRocketController implements Landable {
   private cycleSteps: number;
   private idle = true;
   private landed = false;
+  private firstMove = false;
+  private secondMove = false;
 
   constructor(rocket: Rocket, mainCamera: Camera, cycleSteps: number) {
     this.rocket = rocket;
@@ -39,6 +41,11 @@ export default class PlayerRocketController implements Landable {
     this.idle = x === 0 && y === 0;
     if (!this.idle) {
       this.landed = false;
+      if (this.firstMove) {
+        this.secondMove = true;
+      } else {
+        this.firstMove = true;
+      }
     }
     this.rocket.applyInput(x, y, selfDestruct);
     if (!selfDestruct) {
@@ -90,5 +97,9 @@ export default class PlayerRocketController implements Landable {
 
   public getFootPosition(): Vector2 {
     return this.rocket.getFootPosition();
+  }
+
+  public getHasMoved(): boolean {
+    return this.secondMove;
   }
 }
