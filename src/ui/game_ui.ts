@@ -46,18 +46,23 @@ export default class GameUI {
     playerRocket: PlayerRocketController | null,
     cycleWhenRecordingStarted: number,
     lastSpawnPoint: Vector2Like | null,
-    outstandingGoals: string[],
+    numHappyIslands: number,
     hasMultipleSpawners: boolean,
   ) {
     this.recordingText.setText(playerRocket ? `Recording` : "");
 
-    let returnMsg = "You're back at the start.\nYou can wait here until the loop ends.";
+    let returnMsg = "Ready for takeoff!";
     if (
       playerRocket &&
       lastSpawnPoint &&
       playerRocket.getFootPosition().distance(lastSpawnPoint) !== 0
     ) {
       returnMsg = "Return to the start before the loop ends!";
+    } else if (
+      playerRocket &&
+      playerRocket.getHasMoved()
+    ) {
+      returnMsg = "You're back at the start.\nYou can wait here until the loop ends.";
     }
     // this.returnToStartText.setText(returnMsg);
 
