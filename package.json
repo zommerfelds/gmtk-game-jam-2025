@@ -4,20 +4,17 @@
   "description": "A game",
   "main": "src/index.js",
   "scripts": {
-    "build": "webpack --config webpack/prod.js ",
+    "build": "webpack --config webpack/prod.js",
     "start": "webpack-dev-server --config webpack/base.js --open"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/photonstorm/gmtk-game-jam-2025.git"
   },
-  "author": "Richard Davey <rdavey@gmail.com> (http://www.photonstorm.com)",
-  "license": "MIT",
-  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
   "bugs": {
     "url": "https://github.com/photonstorm/gmtk-game-jam-2025/issues"
   },
-  "homepage": "https://github.com/photonstorm/gmtk-game-jam-2025#readme",
+  "homepage": ".",
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
