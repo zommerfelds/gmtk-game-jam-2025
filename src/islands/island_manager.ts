@@ -103,6 +103,12 @@ export default class IslandManager {
       .length;
   }
 
+  getNumIslandsToMakeHappy(): number {
+    return this.islands
+      .filter(island => island.isGoalToBeHappy())
+      .length;
+  }
+
   processCycleStep() {
     this.islands.forEach(island => island.processCycleStep());
   }

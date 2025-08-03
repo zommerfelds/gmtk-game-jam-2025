@@ -12,14 +12,18 @@ export default class GameUI {
   private watchArrow: Image;
   private recordingStartMarker: Arc;
   private instructionText: Text;
+  private objectiveText: Text;
   private scene: Phaser.Scene;
+
+  private hasWon = false;
+  private stepsLeftToWin = -1;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
 
     this.addPanel(0, SCREEN_HEIGHT - 60, SCREEN_WIDTH, 60);
     this.instructionText = scene.add
-      .text(15, SCREEN_HEIGHT - 48, "", {lineSpacing: 5})
+      .text(15, SCREEN_HEIGHT - 48, "", { lineSpacing: 5 })
       .setScrollFactor(0);
 
     this.watchBody = scene.add.image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_body").setScrollFactor(0);
@@ -28,9 +32,14 @@ export default class GameUI {
     this.recordingStartMarker.setVisible(false);
 
     this.recordingText = scene.add
-      .text(500, 5, "", { wordWrap: { width: 400 }, align: "center"})
+      .text(SCREEN_WIDTH - 15, 5, "", { wordWrap: { width: 400 }, align: "right" })
       .setScrollFactor(0)
-      .setOrigin(0.5, 0);
+      .setOrigin(1, 0);
+
+    this.addPanel(0, 0, 410, 60);
+    this.objectiveText = scene.add
+      .text(15, 12, "", { lineSpacing: 5 })
+      .setScrollFactor(0);
   }
 
   private addPanel(x: number, y: number, w: number, h: number) {
@@ -47,9 +56,34 @@ export default class GameUI {
     cycleWhenRecordingStarted: number,
     lastSpawnPoint: Vector2Like | null,
     numHappyIslands: number,
+    numIslandsToMakeHappy: number,
     hasMultipleSpawners: boolean,
   ) {
     this.recordingText.setText(playerRocket ? `Recording` : "");
+
+    if (this.stepsLeftToWin == 0) {
+      this.hasWon = true;
+    }
+    if (numHappyIslands < numIslandsToMakeHappy) {
+      this.hasWon = false;
+    }
+
+    let currentObjectiveStateText = ""
+    if (this.hasWon) {
+      currentObjectiveStateText = "All shops are supplied sustainably!\nThe universe is happy :)"
+    } else if (numHappyIslands < numIslandsToMakeHappy) {
+      currentObjectiveStateText =
+        `${numHappyIslands} of ${numIslandsToMakeHappy} shops are currently supplied\nRecord loops to supply them sustainably`;
+      this.stepsLeftToWin = -1;
+    } else {
+      if (this.stepsLeftToWin == -1) {
+        this.stepsLeftToWin = CYCLE_STEPS + 5 * TARGET_FRAMERATE;
+      }
+      const secondsLeft = Math.ceil(this.stepsLeftToWin / TARGET_FRAMERATE).toFixed(0);
+      currentObjectiveStateText = `All shops are supplied\nKeep them supplied for ${secondsLeft} more seconds`;
+      this.stepsLeftToWin--;
+    }
+    this.objectiveText.setText(currentObjectiveStateText);
 
     let returnMsg = "Ready for takeoff!";
     if (
@@ -75,8 +109,8 @@ export default class GameUI {
       playerRocket
         ? returnMsg
         : `Press space to spawn a rocket${
-            hasMultipleSpawners ? "\nPress tab to switch spawner" : ""
-          }`,
+          hasMultipleSpawners ? "\nPress tab to switch spawner" : ""
+        }`,
     );
     if (playerRocket) {
       const blink = Math.floor(currentCycleStep / (TARGET_FRAMERATE / 2)) % 2 === 0;
