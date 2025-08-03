@@ -6,6 +6,7 @@ import { GoodsType } from "../islands/goods";
 export default class Sign extends Obstacle {
     constructor(scene: Phaser.Scene, initialX: number, initialY: number, good: GoodsType) {
         super(scene, initialX, initialY, "island_sign")
-        scene.add.sprite(initialX, initialY + 15, good);
+        var sprite = scene.add.sprite(initialX, initialY + 15, good);
+        sprite.setScale(2)
     }
 }
