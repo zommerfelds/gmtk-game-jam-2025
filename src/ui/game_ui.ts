@@ -119,7 +119,7 @@ export default class GameUI {
     if (playerRocket) {
       instruction = returnMsg;
     } else if (isTrackingRecordedRocket) {
-      instruction = "Press esc to stop following this rocket.\nPress left/right to switch rockets.";
+      instruction = "Press tab to stop following this rocket.\nPress left/right to switch rockets.";
     } else {
       instruction = `Press space to spawn a rocket.${
         hasMultipleSpawners ? " Press tab to switch spawner." : ""
