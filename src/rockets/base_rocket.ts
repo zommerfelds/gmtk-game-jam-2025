@@ -12,7 +12,7 @@ const MAX_FORWARDS_ACCELERATION = 0.0005;
 const MAX_BACKWARDS_ACCELERATION = 0.00025;
 
 export default abstract class BaseRocket implements Rocket {
-  private readonly sprite: Phaser.Physics.Matter.Sprite;
+  protected readonly sprite: Phaser.Physics.Matter.Sprite;
   private readonly footLocal: Vector2;
   private readonly scene: Phaser.Scene;
 
@@ -83,16 +83,32 @@ export default abstract class BaseRocket implements Rocket {
   public abstract getRocketControlType(): RocketControlType;
 
   public applyInput(x: number, y: number) {
-    // TODO: handle directional input.
-    const torqueInput = x;
     this.idle = x === 0 && y === 0;
     if (!this.idle) {
       this.landed = false;
     }
-    const accelerationInput = y;
+
+    switch (this.getRocketControlType()) {
+      case RocketControlType.ROTATIONAL:
+        this.applyRotationalInput(x, y);
+        break;
+      case RocketControlType.DIRECTIONAL:
+        this.applyDirectionalInput(x, y);
+        break;
+    }
 
     this.linearVelocityAbs = new Vector2(this.sprite.getVelocity()).length();
     this.angularVelocityAbs = Math.abs(this.sprite.getAngularVelocity());
+
+    if (this.goodsSprite) {
+      this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
+      this.goodsSprite.setRotation(this.sprite.rotation);
+    }
+  }
+
+  applyRotationalInput(x: number, y: number) {
+    const torqueInput = x;
+    const accelerationInput = y;
 
     // Calculate torque and force.
     const appliedTorque = torqueInput * MAX_TORQUE;
@@ -116,11 +132,20 @@ export default abstract class BaseRocket implements Rocket {
     } else {
       this.sprite.play({ key: "Idle", repeat: -1 }, true);
     }
+  }
 
-    if (this.goodsSprite) {
-      this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
-      this.goodsSprite.setRotation(this.sprite.rotation);
+  applyDirectionalInput(x: number, y: number) {
+    const inputVector = new Vector2(x, -y);
+    const magnitude = Phaser.Math.Clamp(inputVector.length(), 0, 1);
+
+    if (magnitude === 0) {
+      this.sprite.play({ key: "Idle", repeat: -1 }, true);
+      return;
     }
+
+    const appliedForce = inputVector.normalize().scale(magnitude * MAX_FORWARDS_ACCELERATION);
+
+    this.sprite.applyForce(appliedForce);
   }
 
   public finalizeLanding(finalPosition: Vector2, finalRotation: number) {

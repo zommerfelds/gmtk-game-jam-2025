@@ -11,6 +11,8 @@ export default class OminRocket extends BaseRocket {
     onRocketDestroyed: (r: Rocket) => void,
   ) {
     super(scene, initialX, initialY, "rocket_omin", onRocketDestroyed);
+
+    this.sprite.setFixedRotation();
   }
 
   public getRocketControlType(): RocketControlType {
