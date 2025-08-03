@@ -26,7 +26,7 @@ export default class GameUI {
     this.instructionText = scene.add
       .text(15, SCREEN_HEIGHT - 48, "", { lineSpacing: 5 })
       .setScrollFactor(0);
-    this.rocketCountText = scene.add.text(10, 10, "", {}).setScrollFactor(0);
+    this.rocketCountText = scene.add.text(SCREEN_WIDTH - 300, SCREEN_HEIGHT - 48, "", {}).setScrollFactor(0);
 
     this.watchBody = scene.add
       .image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_body")
@@ -66,7 +66,7 @@ export default class GameUI {
     numRecordedRockets: number,
     hasMultipleSpawners: boolean,
   ) {
-    this.rocketCountText.setText(`Automated rockets: ${numRecordedRockets}`);
+    this.rocketCountText.setText(`Active loops: ${numRecordedRockets}`);
     this.recordingText.setText(playerRocket ? `Recording` : "");
 
     if (this.stepsLeftToWin == 0) {

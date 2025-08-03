@@ -85,6 +85,7 @@ export default class IslandManager {
 
     if (landingIsland && landable.isReadyToLand()) {
       if (!landable.isLanded()) {
+        landable.land();
         landingIsland.interactWithRocket(landable.getRocket());
       }
       this.snapToIsland(landable.getRocket(), landingIsland);
