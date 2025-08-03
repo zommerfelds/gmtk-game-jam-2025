@@ -11,6 +11,8 @@ import IslandCave from "./island_cave";
 import Landable from "../game_objects/Landable";
 import OminRocket from "../rockets/omin_rocket";
 import ReversibleRocket from "../rockets/reversible_rocket";
+import IslandShop, { ShopColor } from "./island_shop";
+import { GoodsType } from "./goods";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -48,6 +50,8 @@ export default class IslandManager {
       new IslandSkull(scene, 0, 0, cycleSteps, targetFramerate),
       new IslandCave(scene, 700, 300),
       new Island(scene, 1400, 200, "island_lake"),
+      new IslandShop(scene, 1400, 600, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(scene, -500, 300, ShopColor.BLUE, GoodsType.LAVA),
       ...spawnerIslands,
     ];
   }
@@ -104,6 +108,6 @@ export default class IslandManager {
   private snapToIsland(rocket: Rocket, island: Island) {
     const [a, b] = island.getLandingLine();
     const midpoint = new Phaser.Math.Vector2((a.x + b.x) * 0.5, (a.y + b.y) * 0.5);
-    rocket.setPositionAndRotation(midpoint, 0);
+    rocket.setFootPositionZeroRotation(midpoint);
   }
 }

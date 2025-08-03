@@ -11,7 +11,7 @@ export default class PlayerRocketController implements Landable {
   private recordedStates: RecordedState[];
   private mainCamera: Camera;
   private cycleSteps: number;
-  private idle = false;
+  private idle = true;
   private landed = false;
 
   constructor(rocket: Rocket, mainCamera: Camera, cycleSteps: number) {
@@ -41,12 +41,16 @@ export default class PlayerRocketController implements Landable {
       this.landed = false;
     }
     this.rocket.applyInput(x, y, selfDestruct);
-    this.recordedStates.push({
-      position: this.rocket.getFootPosition(),
-      rotation: this.rocket.getRotation(),
-      isLanded: this.landed,
-      isReadyToLand: this.isReadyToLand(),
-    });
+    if (!selfDestruct) {
+      this.recordedStates.push({
+        position: this.rocket.getPosition(),
+        rotation: this.rocket.getRotation(),
+        isLanded: this.landed,
+        isReadyToLand: this.isReadyToLand(),
+        inputX: x,
+        inputY: y,
+      });
+    }
   }
 
   public shouldFinishRecording(): boolean {
