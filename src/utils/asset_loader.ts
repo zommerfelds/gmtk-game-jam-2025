@@ -21,7 +21,9 @@ export function preloadAssets(scene: Phaser.Scene) {
     "island_skull",
     "shop_red",
     "shop_blue",
-    "background",
+    "background_1",
+    "background_2",
+    "background_3",
   ].forEach(name => loadSprite(scene, name));
 
   // Decoration sprites:
