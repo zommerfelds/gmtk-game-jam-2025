@@ -16,6 +16,7 @@ export default abstract class BaseRocket implements Rocket {
   protected readonly sprite: Phaser.Physics.Matter.Sprite;
   private readonly footLocal: Vector2;
   private readonly scene: Phaser.Scene;
+  private readonly onRocketDestroyed: (r: Rocket) => void;
 
   private isDestroyed = false;
   private linearVelocityAbs: number = 0;
@@ -31,6 +32,7 @@ export default abstract class BaseRocket implements Rocket {
     onRocketDestroyed: (r: Rocket) => void,
   ) {
     this.scene = scene;
+    this.onRocketDestroyed = onRocketDestroyed;
     this.sprite = scene.matter.add.sprite(initialX, initialY, spriteName);
     scene.anims.createFromAseprite(spriteName, undefined, this.sprite);
 
@@ -65,13 +67,11 @@ export default abstract class BaseRocket implements Rocket {
           if (bodyA.label == "rocket" && bodyB.label == "rocket") {
             // Two rockets colliding always explode each rocket.
             this.explode();
-            onRocketDestroyed(this);
           } else {
             console.log("angular:", 15 * this.angularVelocityAbs, "linear", this.linearVelocityAbs);
             const combinedVelocity = 15 * this.angularVelocityAbs + this.linearVelocityAbs;
             if (combinedVelocity > 1.5) {
               this.explode();
-              onRocketDestroyed(this);
             }
           }
         }
@@ -81,7 +81,11 @@ export default abstract class BaseRocket implements Rocket {
 
   public abstract getRocketControlType(): RocketControlType;
 
-  public applyInput(x: number, y: number) {
+  public applyInput(x: number, y: number, selfDestructKeyPressed: boolean = false) {
+    if (selfDestructKeyPressed) {
+      this.explode();
+      return;
+    }
     switch (this.getRocketControlType()) {
       case RocketControlType.ROTATIONAL:
         this.applyRotationalInput(x, y);
@@ -175,6 +179,7 @@ export default abstract class BaseRocket implements Rocket {
   }
 
   public explode() {
+    if (this.isDestroyed) return;
     this.isDestroyed = true;
     const positionX = this.sprite.x;
     const positionY = this.sprite.y;
@@ -188,6 +193,8 @@ export default abstract class BaseRocket implements Rocket {
     setTimeout(() => {
       explosion.destroy(true);
     }, 10_000);
+
+    this.onRocketDestroyed(this);
   }
 
   public getFootPosition(): Vector2 {

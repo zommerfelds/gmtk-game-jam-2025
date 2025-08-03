@@ -6,6 +6,7 @@ export default class InputHandler {
   private scene: Phaser.Scene;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private tabKey: Phaser.Input.Keyboard.Key;
+  private selfDestructJustDown = false;
 
   private rocketRotationalInput = new Vector2();
   private rocketDirectionalInput = new Vector2();
@@ -13,14 +14,16 @@ export default class InputHandler {
 
   private primaryJustDown = false;
   private tabJustDown = false;
-
   private prevPrimaryPressed = false;
   private prevRightTriggerPressed = false;
+  private prevSelfDestructPressed = false;
+  private enterKey: Phaser.Input.Keyboard.Key;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.cursors = scene.input.keyboard.createCursorKeys();
     this.tabKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TAB);
+    this.enterKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
   }
 
   update() {
@@ -35,6 +38,7 @@ export default class InputHandler {
     let triggerAxisGamepad = 0;
     let rightTriggerPressed = false;
     let primaryPressed = this.cursors.space?.isDown ?? false;
+    let selfDestructPressed = this.enterKey?.isDown ?? false;
 
     if (pad) {
       const axisX = pad.axes.length > 0 ? pad.axes[0].getValue() : 0;
@@ -51,6 +55,8 @@ export default class InputHandler {
 
       rightTriggerPressed = pad.buttons.length > 7 && pad.buttons[7].value > joystickThreshold;
       primaryPressed = primaryPressed || (pad.buttons.length > 0 && pad.buttons[0].pressed);
+      selfDestructPressed =
+        selfDestructPressed || (pad.buttons.length > 2 && pad.buttons[2].pressed);
     }
 
     this.rocketRotationalInput.set(
@@ -73,6 +79,9 @@ export default class InputHandler {
     const tabKeyJustDown = Phaser.Input.Keyboard.JustDown(this.tabKey);
     this.tabJustDown = tabKeyJustDown || (rightTriggerPressed && !this.prevRightTriggerPressed);
     this.prevRightTriggerPressed = rightTriggerPressed;
+
+    this.selfDestructJustDown = selfDestructPressed && !this.prevSelfDestructPressed;
+    this.prevSelfDestructPressed = selfDestructPressed;
   }
 
   getRocketControlInput(controlType: RocketControlType): Vector2 {
@@ -91,5 +100,9 @@ export default class InputHandler {
 
   isTabButtonJustDown(): boolean {
     return this.tabJustDown;
+  }
+
+  isSelfDestructButtonJustDown(): boolean {
+    return this.selfDestructJustDown;
   }
 }

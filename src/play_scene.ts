@@ -10,6 +10,7 @@ import Vector2Like = Phaser.Types.Math.Vector2Like;
 import InputHandler from "./utils/input_handler";
 import { preloadAssets, prepareAssets } from "./utils/asset_loader";
 import { TARGET_FRAMERATE, CYCLE_SECONDS, CYCLE_STEPS } from "./constants";
+import { createBackground } from "./utils/background";
 
 export default class PlayScene extends Phaser.Scene {
   private inputHandler: InputHandler;
@@ -32,6 +33,7 @@ export default class PlayScene extends Phaser.Scene {
 
   create() {
     prepareAssets(this);
+    createBackground(this, "background");
 
     this.inputHandler = new InputHandler(this);
     this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
@@ -64,7 +66,8 @@ export default class PlayScene extends Phaser.Scene {
       const rocketInput = this.inputHandler.getRocketControlInput(
         this.playerRocketController.getRocket().getRocketControlType(),
       );
-      this.playerRocketController.applyInput(rocketInput.x, rocketInput.y);
+      const selfDestruct = this.inputHandler.isSelfDestructButtonJustDown();
+      this.playerRocketController.applyInput(rocketInput.x, rocketInput.y, selfDestruct);
     } else {
       if (this.inputHandler.isTabButtonJustDown()) {
         this.islandManager.selectNextSpawnerIsland();

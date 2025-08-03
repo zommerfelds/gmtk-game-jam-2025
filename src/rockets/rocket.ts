@@ -1,7 +1,7 @@
 import "phaser";
 import Vector2 = Phaser.Math.Vector2;
 import Camera = Phaser.Cameras.Scene2D.Camera;
-import {GoodsType} from "../islands/goods";
+import { GoodsType } from "../islands/goods";
 import { BodyType } from "matter";
 
 export enum RocketControlType {
@@ -22,7 +22,7 @@ export interface Rocket {
    * @param {number} x - The value for the x-axis.
    * @param {number} y - The value for the y-axis.
    */
-  applyInput(x: number, y: number): void;
+  applyInput(x: number, y: number, selfDestructKeyPressed?: boolean): void;
 
   explode(): void;
 
