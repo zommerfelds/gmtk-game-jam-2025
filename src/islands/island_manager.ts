@@ -28,7 +28,18 @@ export default class IslandManager {
 
     const spawnerIslands: SpawnerIsland[] = [
       new SpawnerIsland(scene, 400, 400, true, onSpawnerDiscovered, OminRocket),
-      new SpawnerIsland(scene, 1200, 0, false, onSpawnerDiscovered, ReversibleRocket),
+      new SpawnerIsland(scene, 1500, 0, false, onSpawnerDiscovered, ReversibleRocket),
+    ];
+
+    this.islands = [
+      new IslandCacti(scene, 1100, 100),
+      new IslandShop(scene, 800, 500, ShopColor.RED, GoodsType.CACTUS),
+      new IslandDoom(scene, 1300, 1000),
+      new IslandSkull(scene, 1000, 1000, cycleSteps, targetFramerate),
+      // new IslandCave(scene, 700, 300),
+      new Island(scene, 1400, 1200, "island_lake"),
+      new IslandShop(scene, -500, 300, ShopColor.BLUE, GoodsType.LAVA),
+      ...spawnerIslands,
     ];
 
     for (const sp of spawnerIslands) {
@@ -43,17 +54,6 @@ export default class IslandManager {
       | SpawnerIsland
       | undefined;
     this.selectedSpawnerIsland = firstDiscovered ?? spawnerIslands[0];
-
-    this.islands = [
-      new IslandDoom(scene, 100, 500),
-      new IslandCacti(scene, 300, 100),
-      new IslandSkull(scene, 0, 0, cycleSteps, targetFramerate),
-      new IslandCave(scene, 700, 300),
-      new Island(scene, 1400, 200, "island_lake"),
-      new IslandShop(scene, 1400, 600, ShopColor.RED, GoodsType.CACTUS),
-      new IslandShop(scene, -500, 300, ShopColor.BLUE, GoodsType.LAVA),
-      ...spawnerIslands,
-    ];
   }
 
   getSelectedSpawnerIsland(): SpawnerIsland {
@@ -98,9 +98,7 @@ export default class IslandManager {
   }
 
   getNumHappyIslands(): number {
-    return this.islands
-      .filter(island => island.isGoalToBeHappy() && island.isHappy())
-      .length;
+    return this.islands.filter(island => island.isGoalToBeHappy() && island.isHappy()).length;
   }
 
   processCycleStep() {

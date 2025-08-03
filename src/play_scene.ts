@@ -105,19 +105,20 @@ export default class PlayScene extends Phaser.Scene {
       }
 
       // Camera movement is disabled for now, to allow for exploration through the rocket.
-      /* const cameraInput = this.inputHandler.getCameraControlInput();
+      /*
+      const cameraInput = this.inputHandler.getCameraControlInput();
       if (!this.allowCameraMovement) {
         if (cameraInput.x === 0 && cameraInput.y === 0) {
           this.allowCameraMovement = true;
         }
-      } 
-      else if (cameraInput.x !== 0 || cameraInput.y !== 0) {
+      } else if (cameraInput.x !== 0 || cameraInput.y !== 0) {
         const cam = this.cameras.main;
         if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
         const CAMERA_SCROLL_SPEED = 10;
         cam.scrollX += cameraInput.x * CAMERA_SCROLL_SPEED;
         cam.scrollY -= cameraInput.y * CAMERA_SCROLL_SPEED;
-      } */
+      }
+      */
 
       if (this.inputHandler.isPrimaryActionButtonJustDown()) {
         this.lastSpawnPoint = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
