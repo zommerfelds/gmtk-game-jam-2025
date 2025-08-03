@@ -1,6 +1,7 @@
 import "phaser";
 import PlayerRocketController from "./rockets/player_rocket";
 import ReversibleRocket from "./rockets/reversible_rocket";
+import OminRocket from "./rockets/omin_rocket";
 import RecordedRocketController from "./rockets/recorded_rocket";
 import IslandManager from "./islands/island_manager";
 import GameUI from "./ui/game_ui";
@@ -60,7 +61,9 @@ export default class PlayScene extends Phaser.Scene {
       this.allowCameraMovement = false;
       this.lastSpawnPoint = null;
     } else if (this.playerRocketController) {
-      const rocketInput = this.inputHandler.getRocketControlInput();
+      const rocketInput = this.inputHandler.getRocketControlInput(
+        this.playerRocketController.getRocket().getRocketControlType(),
+      );
       this.playerRocketController.applyInput(rocketInput.x, rocketInput.y);
     } else {
       if (this.inputHandler.isTabButtonJustDown()) {
@@ -86,13 +89,22 @@ export default class PlayScene extends Phaser.Scene {
       if (this.inputHandler.isPrimaryActionButtonJustDown()) {
         this.lastSpawnPoint = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         console.log("Spawn point: " + this.lastSpawnPoint.x + " " + this.lastSpawnPoint.y);
+        const rocket =
+          Math.random() < 0.5
+            ? new ReversibleRocket(
+                this,
+                this.lastSpawnPoint.x,
+                this.lastSpawnPoint.y,
+                this.onRocketDestroyed.bind(this),
+              )
+            : new OminRocket(
+                this,
+                this.lastSpawnPoint.x,
+                this.lastSpawnPoint.y,
+                this.onRocketDestroyed.bind(this),
+              );
         this.playerRocketController = new PlayerRocketController(
-          new ReversibleRocket(
-            this,
-            this.lastSpawnPoint.x,
-            this.lastSpawnPoint.y,
-            this.onRocketDestroyed.bind(this),
-          ),
+          rocket,
           this.cameras.main,
           CYCLE_STEPS,
         );

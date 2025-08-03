@@ -1,12 +1,14 @@
 import "phaser";
 import Vector2 = Phaser.Math.Vector2;
+import { RocketControlType } from "../rockets/rocket";
 
 export default class InputHandler {
   private scene: Phaser.Scene;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private tabKey: Phaser.Input.Keyboard.Key;
 
-  private rocketInput = new Vector2();
+  private rocketRotationalInput = new Vector2();
+  private rocketDirectionalInput = new Vector2();
   private cameraInput = new Vector2();
 
   private primaryJustDown = false;
@@ -51,9 +53,13 @@ export default class InputHandler {
       primaryPressed = primaryPressed || (pad.buttons.length > 0 && pad.buttons[0].pressed);
     }
 
-    this.rocketInput.set(
+    this.rocketRotationalInput.set(
       xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard,
       triggerAxisGamepad !== 0 ? triggerAxisGamepad : yAxisKeyboard,
+    );
+    this.rocketRotationalInput.set(
+      xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard,
+      yAxisJoystick !== 0 ? yAxisJoystick : yAxisKeyboard,
     );
 
     this.cameraInput.set(
@@ -69,8 +75,10 @@ export default class InputHandler {
     this.prevRightTriggerPressed = rightTriggerPressed;
   }
 
-  getRocketControlInput(): Vector2 {
-    return this.rocketInput.clone();
+  getRocketControlInput(controlType: RocketControlType): Vector2 {
+    return controlType === RocketControlType.ROTATIONAL
+      ? this.rocketRotationalInput.clone()
+      : this.rocketDirectionalInput.clone();
   }
 
   getCameraControlInput(): Vector2 {
