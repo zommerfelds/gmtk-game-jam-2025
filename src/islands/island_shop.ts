@@ -7,93 +7,100 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../constants";
 import { CYCLE_STEPS } from "../constants";
 
 export enum ShopColor {
-    RED = "red",
-    BLUE = "blue",
+  RED = "red",
+  BLUE = "blue",
 }
 
 export default class IslandShop extends Island {
-    private good: GoodsType;
-    private scene: Phaser.Scene;
-    private helpText?: Phaser.GameObjects.Text;
-    private suppliedCountdown: number = -1;
-    private additionalHelpText = "";
-    private stock: Phaser.GameObjects.Sprite
+  private good: GoodsType;
+  private scene: Phaser.Scene;
+  private helpText?: Phaser.GameObjects.Text;
+  private suppliedCountdown: number = -1;
+  private additionalHelpText = "";
+  private rocketPresent = false;
+  private stock: Phaser.GameObjects.Sprite;
 
-    constructor(
-        scene: Phaser.Scene,
-        initialX: number,
-        initialY: number,
-        shopColor: ShopColor,
-        good: GoodsType,
-        additionalHelpText?: string,
-    ) {
-        super(scene, initialX, initialY, `shop_${shopColor}`);
-        this.scene = scene;
-        this.good = good;
-        this.additionalHelpText = additionalHelpText ? `\n${additionalHelpText}` : "";
-        var goodSprite = scene.add.sprite(initialX + 102, initialY - 87, good);
-        goodSprite.setScale(2)
-        this.getSprite().play({ key: "Closed", repeat: -1 });
-        this.stock = scene.add.sprite(initialX - 140, initialY, "shop_stock");
-        scene.anims.createFromAseprite("shop_stock", undefined, this.stock);
-        this.stock.play({ key: "0", repeat: -1 });
+  constructor(
+    scene: Phaser.Scene,
+    initialX: number,
+    initialY: number,
+    shopColor: ShopColor,
+    good: GoodsType,
+    additionalHelpText?: string,
+  ) {
+    super(scene, initialX, initialY, `shop_${shopColor}`);
+    this.scene = scene;
+    this.good = good;
+    this.additionalHelpText = additionalHelpText ? `\n${additionalHelpText}` : "";
+    var goodSprite = scene.add.sprite(initialX + 102, initialY - 87, good);
+    goodSprite.setScale(2);
+    this.getSprite().play({ key: "Closed", repeat: -1 });
+    this.stock = scene.add.sprite(initialX - 130, initialY + 15, "shop_stock");
+    scene.anims.createFromAseprite("shop_stock", undefined, this.stock);
+    this.stock.play({ key: "0", repeat: -1 });
+  }
+
+  interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
+    super.interactWithRocket(rocket, isPlayerRocket);
+    if (rocket.tryTakeGood(this.good)) {
+      this.getSprite().play({ key: "Open", repeat: -1 });
+      this.suppliedCountdown = CYCLE_STEPS;
+    } else if (isPlayerRocket && !this.isHappy()) {
+      if (!this.helpText) {
+        const text = `Hey! I'm out of ${this.getGoodName()}!\nCould you create a supply loop for me?${
+          this.additionalHelpText
+        }`;
+        this.helpText = this.scene.add
+          .text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100, text, {
+            wordWrap: { width: 600 },
+            fontSize: "20px",
+            align: "center",
+          })
+          .setOrigin(0.5, 0.5)
+          .setScrollFactor(0);
+      }
+    }
+  }
+
+  rocketStillOnIsland() {
+    this.rocketPresent = true;
+  }
+
+  getGoodName(): string {
+    switch (this.good) {
+      case GoodsType.CACTUS:
+        return "cacti";
+      case GoodsType.LAVA:
+        return "lava";
+      case GoodsType.WATER:
+        return "water";
+      case GoodsType.NONE:
+        return "none";
+    }
+  }
+
+  processCycleStep() {
+    this.suppliedCountdown = Math.max(-1, this.suppliedCountdown - 1);
+
+    const stockAnimationKey = Math.ceil((this.suppliedCountdown / CYCLE_STEPS) * 10).toString();
+    this.stock.play({ key: stockAnimationKey, repeat: -1 });
+
+    if (!this.isHappy()) {
+      this.getSprite().play({ key: "Closed", repeat: -1 }, true);
     }
 
-    interactWithRocket(rocket: Rocket) {
-        super.interactWithRocket(rocket);
-        if (rocket.tryTakeGood(this.good)) {
-            this.getSprite().play({ key: "Open", repeat: -1 });
-            this.suppliedCountdown = CYCLE_STEPS;
-        } else {
-            // TODO: currently this is shown for all rockets, even recorded rockets.
-            if (!this.helpText) {
-                const text = `Hey! I'm out of ${this.getGoodName()}!\nCould you create a supply loop for me?${this.additionalHelpText
-                    }`;
-                this.helpText = this.scene.add
-                    .text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100, text, {
-                        wordWrap: { width: 600 },
-                        fontSize: "20px",
-                        align: "center",
-                    })
-                    .setOrigin(0.5, 0.5)
-                    .setScrollFactor(0);
-
-                setTimeout(() => {
-                    this.helpText?.destroy();
-                    this.helpText = undefined;
-                }, 7000);
-            }
-        }
+    if (!this.rocketPresent) {
+      this.helpText?.destroy();
+      this.helpText = undefined;
     }
+    this.rocketPresent = false;
+  }
 
-    getGoodName(): string {
-        switch (this.good) {
-            case GoodsType.CACTUS:
-                return "cactus";
-            case GoodsType.LAVA:
-                return "lava";
-            case GoodsType.WATER:
-                return "water";
-            case GoodsType.NONE:
-                return "none";
-        }
-    }
+  isGoalToBeHappy(): boolean {
+    return true;
+  }
 
-    processCycleStep() {
-        this.suppliedCountdown = Math.max(-1, this.suppliedCountdown - 1);
-        var stockAnimationKey = Math.ceil((this.suppliedCountdown / CYCLE_STEPS) * 10).toString()
-        this.stock.play({ key: stockAnimationKey, repeat: -1 });
-
-        if (!this.isHappy()) {
-            this.getSprite().play({ key: "Closed", repeat: -1 }, true);
-        }
-    }
-
-    isGoalToBeHappy(): boolean {
-        return true;
-    }
-
-    isHappy(): boolean {
-        return this.suppliedCountdown > -1;
-    }
+  isHappy(): boolean {
+    return this.suppliedCountdown > -1;
+  }
 }

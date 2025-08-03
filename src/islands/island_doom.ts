@@ -11,8 +11,8 @@ export default class IslandDoom extends Island {
     new Sign(scene, initialX, initialY + 86, GoodsType.LAVA)
   }
 
-  interactWithRocket(rocket: Rocket) {
-    super.interactWithRocket(rocket);
+  interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
+    super.interactWithRocket(rocket, isPlayerRocket);
     rocket.tryStoreGood(GoodsType.LAVA);
   }
 }

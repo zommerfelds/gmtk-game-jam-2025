@@ -22,7 +22,7 @@ export default abstract class BaseRocket implements Rocket {
   private linearVelocityAbs: number = 0;
   private angularVelocityAbs: number = 0;
   private loadedGood: GoodsType = GoodsType.NONE;
-  private goodsSprite?: Sprite = null;
+  protected goodsSprite?: Sprite = null;
 
   constructor(
     scene: Phaser.Scene,
@@ -157,7 +157,7 @@ export default abstract class BaseRocket implements Rocket {
     this.sprite.setAngularVelocity(0);
   }
 
-  private updateGoodsSprite() {
+  protected updateGoodsSprite() {
     if (this.goodsSprite) {
       this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
       this.goodsSprite.setRotation(this.sprite.rotation);
@@ -184,6 +184,10 @@ export default abstract class BaseRocket implements Rocket {
     return true;
   }
 
+  public destroy() {
+    // To be overridden by subclasses.
+  }
+
   public explode() {
     if (this.isDestroyed) return;
     this.isDestroyed = true;
@@ -201,6 +205,7 @@ export default abstract class BaseRocket implements Rocket {
     }, 10_000);
 
     this.onRocketDestroyed(this);
+    this.destroy();
   }
 
   public getFootPosition(): Vector2 {
@@ -225,6 +230,25 @@ export default abstract class BaseRocket implements Rocket {
   }
 
   followWithCamera(camera: Phaser.Cameras.Scene2D.Camera) {
-    camera.startFollow(this.sprite);
+    camera.pan(
+      this.sprite.x,
+      this.sprite.y,
+      500,
+      "Sine.easeInOut",
+      true, // Force immediately
+      (camera, progress) => { // Callback function
+        // Update the camera's pan target to the player's current position
+        if (!this.isDestroyed) {
+          camera.panEffect.destination.x = this.sprite.x;
+          camera.panEffect.destination.y = this.sprite.y;
+
+          // Optional: You can also include a check for when the pan is complete (progress === 1)
+          // and execute additional logic if needed.
+          if (progress === 1) {
+            camera.startFollow(this.sprite, true);
+          }
+        }
+      }
+    );
   }
 }

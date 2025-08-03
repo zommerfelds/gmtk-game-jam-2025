@@ -11,8 +11,8 @@ export default class IslandCacti extends Island {
     new Sign(scene, initialX, initialY + 83, GoodsType.CACTUS);
   }
 
-  interactWithRocket(rocket: Rocket) {
-    super.interactWithRocket(rocket);
+  interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
+    super.interactWithRocket(rocket, isPlayerRocket);
     rocket.tryStoreGood(GoodsType.CACTUS);
   }
 }

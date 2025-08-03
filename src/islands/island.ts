@@ -40,8 +40,13 @@ export default class Island {
     return this.spawnPoint
   }
 
-  interactWithRocket(rocket: Rocket) {
+  interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
     console.log("Just landed!");
+    // Do nothing by default. This should be overwritten by specific islands.
+  }
+
+  rocketStillOnIsland() {
+    console.log("Still landed");
     // Do nothing by default. This should be overwritten by specific islands.
   }
 

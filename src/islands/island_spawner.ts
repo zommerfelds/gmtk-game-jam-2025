@@ -43,8 +43,8 @@ export default class SpawnerIsland extends Island {
     return this.isDiscovered;
   }
 
-  interactWithRocket(rocket: Rocket) {
-    super.interactWithRocket(rocket);
+  interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
+    super.interactWithRocket(rocket, isPlayerRocket);
     this.discoverIsland();
   }
 

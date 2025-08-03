@@ -37,7 +37,7 @@ export default class PlayScene extends Phaser.Scene {
     createBackground(this, "background");
 
     this.inputHandler = new InputHandler(this);
-    this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
+    this.islandManager = new IslandManager(this);
     const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
     this.cameras.main.centerOn(spawn.x, spawn.y);
     this.ui = new GameUI(this);
@@ -47,10 +47,10 @@ export default class PlayScene extends Phaser.Scene {
     this.inputHandler.update();
 
     this.recordedRockets.forEach(recordedRocket => {
-      this.islandManager.checkLandingStatus(recordedRocket);
+      this.islandManager.checkLandingStatus(recordedRocket, /* isPlayerRocket= */ false);
     });
     if (this.playerRocketController) {
-      this.islandManager.checkLandingStatus(this.playerRocketController);
+      this.islandManager.checkLandingStatus(this.playerRocketController, /* isPlayerRocket= */ true);
     }
 
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
