@@ -31,7 +31,7 @@ export function createBackgroundLayer(
 }
 
 export function createBackground(scene: Phaser.Scene, textureKey: string) {
-  createBackgroundLayer(scene, textureKey, 0.1, 0.1, 0.5);
-  createBackgroundLayer(scene, textureKey, 0.2, 0.3, 0.5);
-  createBackgroundLayer(scene, textureKey, 0.3, 0.5, 0.5);
+  createBackgroundLayer(scene, "background_3", 0.1, 0.5, 1);
+  createBackgroundLayer(scene, "background_2", 0.2, 0.7, 1);
+  createBackgroundLayer(scene, "background_1", 0.3, 1, 1);
 }
