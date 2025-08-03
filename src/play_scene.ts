@@ -72,9 +72,13 @@ export default class PlayScene extends Phaser.Scene {
     } else {
       // No rocket is currently controlled by the player.
       if (this.inputHandler.isTabButtonJustDown()) {
-        this.islandManager.selectNextSpawnerIsland();
+        if (!this.currentlyTrackedRecordedRocket) {
+          this.islandManager.selectNextSpawnerIsland();
+        }
+        this.currentlyTrackedRecordedRocket = null;
         const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         const cam = this.cameras.main;
+        cam.stopFollow();
         if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
         this.cameras.main.pan(spawn.x, spawn.y, 500, "Sine.easeInOut");
       }
@@ -120,7 +124,10 @@ export default class PlayScene extends Phaser.Scene {
       }
       */
 
-      if (this.inputHandler.isPrimaryActionButtonJustDown()) {
+      if (
+        this.inputHandler.isPrimaryActionButtonJustDown() &&
+        !this.currentlyTrackedRecordedRocket
+      ) {
         this.lastSpawnPoint = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
         console.log("Spawn point: " + this.lastSpawnPoint.x + " " + this.lastSpawnPoint.y);
         const rocket = this.islandManager
