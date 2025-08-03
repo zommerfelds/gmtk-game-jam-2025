@@ -115,7 +115,7 @@ export default class GameUI {
         ? returnMsg
         : `Press space to spawn a rocket.${
             hasMultipleSpawners ? " Press tab to switch spawner" : ""
-          }${numRecordedRockets > 0 ? " Press left/right to follow your rockets" : ""}`,
+          }${numRecordedRockets > 0 ? "\nPress left/right to follow your rockets" : ""}`,
     );
     if (playerRocket) {
       const blink = Math.floor(currentCycleStep / (TARGET_FRAMERATE / 2)) % 2 === 0;
