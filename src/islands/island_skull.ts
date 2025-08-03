@@ -39,21 +39,4 @@ export default class IslandSkull extends Island {
   isHappy(): boolean {
     return this.hasCactusCountdown > -1 && this.hasLavaCountdown > -1;
   }
-
-  getDescriptionToBeHappy(): string {
-    if (this.isHappy()) {
-      const remainingTime =
-        Math.min(this.hasCactusCountdown, this.hasLavaCountdown) / this.targetFramerate;
-      return `Skull Island is happy! (still for ${remainingTime.toFixed(1)} seconds)`;
-    }
-    if (this.hasCactusCountdown > -1) {
-      const remainingTime = (this.hasCactusCountdown / this.targetFramerate).toFixed(1);
-      return `Skull Island wants Lava (still has Cactus for ${remainingTime} seconds)`;
-    }
-    if (this.hasLavaCountdown > -1) {
-      const remainingTime = (this.hasLavaCountdown / this.targetFramerate).toFixed(1);
-      return `Skull Island wants Cactus (still has Lava for ${remainingTime} seconds)`;
-    }
-    return "Skull Island wants Cactus and Lava";
-  }
 }
