@@ -13,6 +13,7 @@ import OminRocket from "../rockets/omin_rocket";
 import ReversibleRocket from "../rockets/reversible_rocket";
 import IslandShop, { ShopColor } from "./island_shop";
 import { GoodsType } from "./goods";
+import Obstacle from "../obstacles/obstacle";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -33,6 +34,16 @@ export default class IslandManager {
 
     scene.add.text(-300, 200, "<- shop this way");
 
+    new Obstacle(scene, -100, 500, "obstacle_meteor", 0);
+    new Obstacle(scene, 0, 200, "obstacle_meteor", 30);
+    new Obstacle(scene, -200, 400, "obstacle_meteor", 150);
+    new Obstacle(scene, -215, 555, "obstacle_meteor", 220);
+
+    new Obstacle(scene, 1900, 500, "obstacle_meteor", 0);
+    new Obstacle(scene, 2000, 200, "obstacle_meteor", 30);
+    new Obstacle(scene, 1800, 400, "obstacle_meteor", 150);
+    new Obstacle(scene, 1815, 555, "obstacle_meteor", 220);
+
     this.islands = [
       new IslandCacti(scene, 1100, 100),
       new IslandShop(
@@ -43,12 +54,16 @@ export default class IslandManager {
         GoodsType.CACTUS,
         "There is a farm just above here.",
       ),
+      new IslandShop(scene, 1800, 600, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(scene, 1900, -600, ShopColor.RED, GoodsType.CACTUS),
       new IslandDoom(scene, 100, -500),
       new IslandSkull(scene, -600, 1000),
       // new IslandCave(scene, 700, 300),
       new Island(scene, 1400, 1200, "island_lake"),
       new IslandShop(scene, -800, 300, ShopColor.BLUE, GoodsType.LAVA),
       new IslandShop(scene, 1200, 900, ShopColor.BLUE, GoodsType.LAVA),
+      new IslandShop(scene, 700, -900, ShopColor.BLUE, GoodsType.LAVA),
+      new IslandShop(scene, -200, 1000, ShopColor.BLUE, GoodsType.LAVA),
       ...spawnerIslands,
     ];
 
