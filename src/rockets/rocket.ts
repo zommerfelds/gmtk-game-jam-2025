@@ -1,8 +1,8 @@
 import "phaser";
 import Vector2 = Phaser.Math.Vector2;
-import Landable from "../game_objects/Landable";
 import Camera = Phaser.Cameras.Scene2D.Camera;
 import {GoodsType} from "../islands/goods";
+import { BodyType } from "matter";
 
 export enum RocketControlType {
   /** Rockets that can move in multiple directions directly. */
@@ -12,7 +12,7 @@ export enum RocketControlType {
   ROTATIONAL,
 }
 
-export interface Rocket extends Landable {
+export interface Rocket {
   getRocketControlType(): RocketControlType;
 
   /**
@@ -46,10 +46,16 @@ export interface Rocket extends Landable {
    * @param {Camera} camera - The camera that should follow the target.
    */
   followWithCamera(camera: Camera): void;
+
   /** Returns foot position (lowest point) of the rocket. */
   getFootPosition(): Vector2;
-  /** Returns true if the rocket's linear and angular velocity are near zero. */
-  isStationary(): boolean;
-  /** Returns true if no player input occurred this frame. */
-  isIdle(): boolean;
+
+  getBody(): BodyType;
+
+  getPosition(): Vector2;
+
+  getRotation(): number;
+
+  /** Explicitly sets the position and rotation, removing any linear or rotational velocity. */
+  setPositionAndRotation(position: Vector2, rotation: number): void;
 }

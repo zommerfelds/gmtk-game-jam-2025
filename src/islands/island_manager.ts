@@ -8,6 +8,7 @@ import { distancePointToSegment } from "../utils/geometry";
 import { Rocket } from "../rockets/rocket";
 import IslandSkull from "./island_skull";
 import IslandCave from "./island_cave";
+import Landable from "../game_objects/Landable";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -62,25 +63,25 @@ export default class IslandManager {
     this.selectedSpawnerIsland = available[nextIndex];
   }
 
-  checkLandingStatus(rocket: Rocket) {
+  checkLandingStatus(landable: Landable) {
     const TOLERANCE = 3;
-    const footPos = rocket.getFootPosition();
+    const footPos = landable.getRocket().getFootPosition();
 
     // Determine current island under rocket.
-    let landedIsland: Island | undefined;
+    let landingIsland: Island | undefined;
     for (const island of this.islands) {
       const [a, b] = island.getLandingLine();
       if (distancePointToSegment(footPos, a, b) < TOLERANCE) {
-        landedIsland = island;
+        landingIsland = island;
         break;
       }
     }
 
-    if (landedIsland && rocket.isStationary() && rocket.isIdle()) {
-      if (!rocket.isLanded()) {
-        landedIsland.interactWithRocket(rocket);
+    if (landingIsland && landable.isReadyToLand()) {
+      if (!landable.isLanded()) {
+        landingIsland.interactWithRocket(landable.getRocket());
       }
-      this.snapToIsland(rocket, landedIsland);
+      this.snapToIsland(landable.getRocket(), landingIsland);
     }
   }
 
@@ -101,6 +102,6 @@ export default class IslandManager {
   private snapToIsland(rocket: Rocket, island: Island) {
     const [a, b] = island.getLandingLine();
     const midpoint = new Phaser.Math.Vector2((a.x + b.x) * 0.5, (a.y + b.y) * 0.5);
-    rocket.finalizeLanding(midpoint, 0);
+    rocket.setPositionAndRotation(midpoint, 0);
   }
 }

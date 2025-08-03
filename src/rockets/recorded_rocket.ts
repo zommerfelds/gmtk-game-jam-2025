@@ -1,32 +1,36 @@
 import "phaser";
-import RecordedInput from "./recorded_input";
+import RecordedState from "./recorded_state";
 import { Rocket } from "./rocket";
 import Landable from "../game_objects/Landable";
-import Vector2 = Phaser.Math.Vector2;
 
 export default class RecordedRocketController implements Landable {
   private rocket: Rocket;
-  private recordedInputs: RecordedInput[];
+  private recordedStates: RecordedState[];
   private currentRecordedInputIndex = 0;
 
-  constructor(rocket: Rocket, recordedInputs: RecordedInput[]) {
+  constructor(rocket: Rocket, recordedStates: RecordedState[]) {
     this.rocket = rocket;
-    this.recordedInputs = recordedInputs;
+    this.recordedStates = recordedStates;
   }
 
-  public applyNextRecordedInput() {
-    const nextRecordedInput = this.recordedInputs[this.currentRecordedInputIndex];
-    this.rocket.applyInput(nextRecordedInput.x, nextRecordedInput.y);
+  public advanceRecordedState() {
     this.currentRecordedInputIndex += 1;
-    this.currentRecordedInputIndex %= this.recordedInputs.length;
-  }
+    this.currentRecordedInputIndex %= this.recordedStates.length;
 
-  public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
-    this.rocket.finalizeLanding(finalPosition, finalRotation);
+    const state = this.recordedStates[this.currentRecordedInputIndex];
+    this.rocket.setPositionAndRotation(state.position, state.rotation);
   }
 
   public isLanded(): boolean {
-    return this.rocket.isLanded();
+    return this.recordedStates[this.currentRecordedInputIndex].isLanded;
+  }
+
+  public isReadyToLand(): boolean {
+    return this.recordedStates[this.currentRecordedInputIndex].isReadyToLand;
+  }
+
+  public land() {
+    // Do nothing.
   }
 
   public getRocket(): Rocket {

@@ -1,15 +1,15 @@
 import "phaser";
-import Vector2 = Phaser.Math.Vector2;
+import { Rocket } from "../rockets/rocket";
 
 export default interface Landable {
-  /**
-   * Completes the landing process by setting the final position and rotation of the rocket.
-   *
-   * @param {Vector2} finalPosition The final position of the rocket.
-   * @param {number} finalRotation The final rotation of the rocket.
-   */
-  finalizeLanding(finalPosition: Vector2, finalRotation: number): void;
-
   /** Returns true if this object is currently landed. */
   isLanded(): boolean;
+
+  /** Returns true if the rocket is ready to land (stationary and idle). */
+  isReadyToLand(): boolean;
+
+  /** Changes the state to landed. */
+  land(): void;
+
+  getRocket(): Rocket;
 }

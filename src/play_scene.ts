@@ -44,10 +44,10 @@ export default class PlayScene extends Phaser.Scene {
     this.inputHandler.update();
 
     this.recordedRockets.forEach(recordedRocket => {
-      this.islandManager.checkLandingStatus(recordedRocket.getRocket());
+      this.islandManager.checkLandingStatus(recordedRocket);
     });
     if (this.playerRocketController) {
-      this.islandManager.checkLandingStatus(this.playerRocketController.getRocket());
+      this.islandManager.checkLandingStatus(this.playerRocketController);
     }
 
     if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
@@ -113,7 +113,7 @@ export default class PlayScene extends Phaser.Scene {
     }
 
     this.recordedRockets.forEach(recordedRocket => {
-      recordedRocket.applyNextRecordedInput();
+      recordedRocket.advanceRecordedState();
     });
 
     this.islandManager.processCycleStep();

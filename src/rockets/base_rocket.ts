@@ -6,6 +6,7 @@ import * as Phaser from "phaser";
 import CollisionStartEvent = Phaser.Physics.Matter.Events.CollisionStartEvent;
 import { GoodsType } from "../islands/goods";
 import Sprite = Phaser.GameObjects.Sprite;
+import { BodyType } from "matter";
 
 const MAX_TORQUE = 0.005;
 const MAX_FORWARDS_ACCELERATION = 0.0005;
@@ -16,8 +17,6 @@ export default abstract class BaseRocket implements Rocket {
   private readonly footLocal: Vector2;
   private readonly scene: Phaser.Scene;
 
-  private landed = false;
-  private idle = true;
   private isDestroyed = false;
   private linearVelocityAbs: number = 0;
   private angularVelocityAbs: number = 0;
@@ -83,11 +82,6 @@ export default abstract class BaseRocket implements Rocket {
   public abstract getRocketControlType(): RocketControlType;
 
   public applyInput(x: number, y: number) {
-    this.idle = x === 0 && y === 0;
-    if (!this.idle) {
-      this.landed = false;
-    }
-
     switch (this.getRocketControlType()) {
       case RocketControlType.ROTATIONAL:
         this.applyRotationalInput(x, y);
@@ -148,13 +142,16 @@ export default abstract class BaseRocket implements Rocket {
     this.sprite.applyForce(appliedForce);
   }
 
-  public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
+  public setPositionAndRotation(finalPosition: Vector2, finalRotation: number) {
     this.sprite.setPosition(finalPosition.x - this.footLocal.x, finalPosition.y - this.footLocal.y);
     this.sprite.setRotation(finalRotation);
     this.sprite.setVelocity(0, 0);
     this.sprite.setAngularVelocity(0);
-    this.landed = true;
-    console.log("Landed!");
+
+    if (this.goodsSprite) {
+      this.goodsSprite.setPosition(this.sprite.x, this.sprite.y, this.sprite.z, this.sprite.w);
+      this.goodsSprite.setRotation(this.sprite.rotation);
+    }
   }
 
   public tryStoreGood(good: GoodsType): boolean {
@@ -202,20 +199,16 @@ export default abstract class BaseRocket implements Rocket {
     return new Phaser.Math.Vector2(worldX, worldY);
   }
 
-  public isStationary(): boolean {
-    const body = this.sprite.body as MatterJS.BodyType;
-    if (!body) return false;
-    const linearSpeed = body.speed ?? 0;
-    const angularSpeed = Math.abs(body.angularVelocity ?? 0);
-    return linearSpeed < 0.05 && angularSpeed < 0.05;
+  public getBody(): BodyType {
+    return this.sprite.body as BodyType;
   }
 
-  public isIdle(): boolean {
-    return this.idle;
+  getPosition(): Phaser.Math.Vector2 {
+    return new Vector2(this.sprite.x, this.sprite.y);
   }
 
-  public isLanded(): boolean {
-    return this.landed;
+  getRotation(): number {
+    return this.sprite.rotation;
   }
 
   followWithCamera(camera: Phaser.Cameras.Scene2D.Camera) {

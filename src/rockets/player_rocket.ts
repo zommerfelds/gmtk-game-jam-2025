@@ -1,5 +1,5 @@
 import "phaser";
-import RecordedInput from "./recorded_input";
+import RecordedState from "./recorded_state";
 import Landable from "../game_objects/Landable";
 import { Rocket, RocketControlType } from "./rocket";
 import Vector2 = Phaser.Math.Vector2;
@@ -8,14 +8,15 @@ import Camera = Phaser.Cameras.Scene2D.Camera;
 
 export default class PlayerRocketController implements Landable {
   private rocket: Rocket;
-  private recordedInputs: RecordedInput[];
+  private recordedStates: RecordedState[];
   private mainCamera: Camera;
   private cycleSteps: number;
-  private isLanded_ = false;
+  private idle = false;
+  private landed = false;
 
   constructor(rocket: Rocket, mainCamera: Camera, cycleSteps: number) {
     this.rocket = rocket;
-    this.recordedInputs = [];
+    this.recordedStates = [];
     this.mainCamera = mainCamera;
     this.cycleSteps = cycleSteps;
 
@@ -34,12 +35,21 @@ export default class PlayerRocketController implements Landable {
    * @param {number} y - The value for the y-axis.
    */
   public applyInput(x: number, y: number) {
+    this.idle = x === 0 && y === 0;
+    if (!this.idle) {
+      this.landed = false;
+    }
     this.rocket.applyInput(x, y);
-    this.recordedInputs.push({ x, y });
+    this.recordedStates.push({
+      position: this.rocket.getFootPosition(),
+      rotation: this.rocket.getRotation(),
+      isLanded: this.landed,
+      isReadyToLand: this.isReadyToLand(),
+    });
   }
 
   public shouldFinishRecording(): boolean {
-    return this.recordedInputs.length == this.cycleSteps;
+    return this.recordedStates.length == this.cycleSteps;
   }
 
   public getRocket(): Rocket {
@@ -53,15 +63,24 @@ export default class PlayerRocketController implements Landable {
    */
   public finishRecording(): RecordedRocket {
     this.mainCamera.stopFollow();
-    return new RecordedRocket(this.rocket, this.recordedInputs);
+    return new RecordedRocket(this.rocket, this.recordedStates);
   }
 
-  public finalizeLanding(finalPosition: Vector2, finalRotation: number) {
-    this.rocket.finalizeLanding(finalPosition, finalRotation);
+  public isReadyToLand(): boolean {
+    const body = this.getRocket().getBody();
+    if (!body) return false;
+    const linearSpeed = body.speed ?? 0;
+    const angularSpeed = Math.abs(body.angularVelocity ?? 0);
+    const stationary = linearSpeed < 0.05 && angularSpeed < 0.05;
+    return stationary && this.idle;
+  }
+
+  public land() {
+    this.landed = true;
   }
 
   public isLanded(): boolean {
-    return this.rocket.isLanded();
+    return this.landed;
   }
 
   public getFootPosition(): Vector2 {
