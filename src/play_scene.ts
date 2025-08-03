@@ -7,7 +7,7 @@ import GameUI from "./ui/game_ui";
 import { Rocket } from "./rockets/rocket";
 import Vector2Like = Phaser.Types.Math.Vector2Like;
 import InputHandler from "./utils/input_handler";
-import { preloadAssets } from "./utils/asset_loader";
+import { preloadAssets, prepareAssets } from "./utils/asset_loader";
 import { TARGET_FRAMERATE, CYCLE_SECONDS, CYCLE_STEPS } from "./constants";
 
 export default class PlayScene extends Phaser.Scene {
@@ -30,6 +30,8 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   create() {
+    prepareAssets(this);
+
     this.inputHandler = new InputHandler(this);
     this.islandManager = new IslandManager(this, CYCLE_STEPS, TARGET_FRAMERATE);
     const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();

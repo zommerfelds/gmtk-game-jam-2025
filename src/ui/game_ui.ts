@@ -14,19 +14,26 @@ export default class GameUI {
   private watchArrow: Image;
   private recordingStartMarker: Arc;
   private instructionText: Text;
+  private scene: Phaser.Scene;
 
   constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+
+    this.addPanel(0, 0, 140, 200);
+    this.watchBody = scene.add.image(70, 70, "watch_body").setScrollFactor(0);
+    this.watchArrow = scene.add.image(70, 70, "watch_arrow").setScrollFactor(0);
+
     this.recordingText = scene.add
       .text(500, 5, "", { wordWrap: { width: 400 } })
       .setScrollFactor(0);
     this.returnToStartText = scene.add
       .text(5, 145, "", { wordWrap: { width: 160 }, align: "center" })
       .setScrollFactor(0);
+
+    this.addPanel(0, scene.cameras.main.height - 60, scene.cameras.main.width, 60);
     this.outstandingGoalsText = scene.add
-      .text(5, 560, "", { wordWrap: { width: 800 } })
+      .text(15, 550, "", { wordWrap: { width: 800 } })
       .setScrollFactor(0);
-    this.watchBody = scene.add.image(70, 70, "watch_body").setScrollFactor(0);
-    this.watchArrow = scene.add.image(70, 70, "watch_arrow").setScrollFactor(0);
 
     const cam = scene.cameras.main;
     this.instructionText = scene.add
@@ -35,6 +42,16 @@ export default class GameUI {
       .setScrollFactor(0);
     this.recordingStartMarker = scene.add.circle(70, 70, 6, 0xff0000).setScrollFactor(0);
     this.recordingStartMarker.setVisible(false);
+
+    // this.addPanel(500, 0, 200, 75);
+  }
+
+  private addPanel(x: number, y: number, w: number, h: number) {
+    const n = this.scene.add
+      .nineslice(x, y, "ui", "ui_panel_frame", w, h, 10, 10, 10, 10)
+      .setScrollFactor(0);
+    n.setOrigin(0, 0);
+    return n;
   }
 
   update(

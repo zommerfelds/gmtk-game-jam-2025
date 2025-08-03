@@ -24,7 +24,14 @@ export function preloadAssets(scene: Phaser.Scene) {
   ["effect_explosion", "icon_cactus", "icon_lava"].forEach(name => loadSprite(scene, name, true));
 
   // Static images:
-  ["watch_arrow", "watch_body"].forEach(name => {
+  ["watch_arrow", "watch_body", "ui"].forEach(name => {
     scene.load.image(name, `sprite_${name}.png`);
   });
+}
+
+// Stuff that can't happen in preload.
+export function prepareAssets(scene: Phaser.Scene) {
+  // Manually slice out parts of the image (could probably be done better with an atlas).
+  const uiTexture = scene.textures.get("ui");
+  uiTexture.add("ui_panel_frame", 0, 0, 0, 32, 32);
 }
