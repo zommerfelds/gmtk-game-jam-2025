@@ -18,6 +18,7 @@ export default class PlayScene extends Phaser.Scene {
   private recordedRockets: RecordedRocketController[] = [];
   private currentCycleStep = 0;
   private cycleWhenRecordingStarted = 0;
+  private currentlyTrackedRecordedRocket: RecordedRocketController | null = null;
   private ui: GameUI;
   private islandManager: IslandManager;
   private lastSpawnPoint?: Vector2Like = null;
@@ -69,6 +70,7 @@ export default class PlayScene extends Phaser.Scene {
       const selfDestruct = this.inputHandler.isSelfDestructButtonJustDown();
       this.playerRocketController.applyInput(rocketInput.x, rocketInput.y, selfDestruct);
     } else {
+      // No rocket is currently controlled by the player.
       if (this.inputHandler.isTabButtonJustDown()) {
         this.islandManager.selectNextSpawnerIsland();
         const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
@@ -76,13 +78,40 @@ export default class PlayScene extends Phaser.Scene {
         if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
         this.cameras.main.pan(spawn.x, spawn.y, 500, "Sine.easeInOut");
       }
-      const cameraInput = this.inputHandler.getCameraControlInput();
+
+      if (
+        this.inputHandler.isSelectNextRocketButtonJustDown() ||
+        this.inputHandler.isSelectPreviousRocketButtonJustDown()
+      ) {
+        const dir = this.inputHandler.isSelectNextRocketButtonJustDown() ? 1 : -1;
+        if (this.recordedRockets.length > 0) {
+          let idx = this.currentlyTrackedRecordedRocket
+            ? this.recordedRockets.indexOf(this.currentlyTrackedRecordedRocket)
+            : -1;
+          idx = (idx + dir + this.recordedRockets.length) % this.recordedRockets.length;
+          this.currentlyTrackedRecordedRocket = this.recordedRockets[idx];
+          this.cameras.main.stopFollow();
+          this.currentlyTrackedRecordedRocket.getRocket().followWithCamera(this.cameras.main);
+        }
+      }
+
+      if (this.currentlyTrackedRecordedRocket && this.inputHandler.isEscButtonJustDown()) {
+        this.cameras.main.stopFollow();
+        const spawn = this.islandManager.getSelectedSpawnerIsland().getSpawnPoint();
+        const cam = this.cameras.main;
+        if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
+        this.cameras.main.pan(spawn.x, spawn.y, 500, "Sine.easeInOut");
+        this.currentlyTrackedRecordedRocket = null;
+      }
+
+      // Camera movement is disabled for now, to allow for exploration through the rocket.
+      /* const cameraInput = this.inputHandler.getCameraControlInput();
       if (!this.allowCameraMovement) {
         if (cameraInput.x === 0 && cameraInput.y === 0) {
           this.allowCameraMovement = true;
         }
-      } // Camera movement is disabled for now, to allow for exploration through the rocket.
-      /*else if (cameraInput.x !== 0 || cameraInput.y !== 0) {
+      } 
+      else if (cameraInput.x !== 0 || cameraInput.y !== 0) {
         const cam = this.cameras.main;
         if (cam.panEffect && cam.panEffect.isRunning) cam.panEffect.reset();
         const CAMERA_SCROLL_SPEED = 10;
@@ -132,5 +161,9 @@ export default class PlayScene extends Phaser.Scene {
       this.allowCameraMovement = false;
     }
     this.recordedRockets = this.recordedRockets.filter(el => el.getRocket() != rocket);
+    if (this.currentlyTrackedRecordedRocket?.getRocket() == rocket) {
+      this.currentlyTrackedRecordedRocket = null;
+      this.cameras.main.stopFollow();
+    }
   }
 }
