@@ -57,6 +57,8 @@ export default class IslandManager {
       ),
       new IslandShop(scene, 1800, 600, ShopColor.RED, GoodsType.CACTUS),
       new IslandShop(scene, 1900, -600, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(scene, -100, 1300, ShopColor.RED, GoodsType.WATER),
+      new IslandShop(scene, 1000, -200, ShopColor.RED, GoodsType.WATER),
       new IslandDoom(scene, 100, -500),
       new IslandSkull(scene, -600, 1000),
       // new IslandCave(scene, 700, 300),
