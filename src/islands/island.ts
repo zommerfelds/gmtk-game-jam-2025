@@ -45,11 +45,6 @@ export default class Island {
     // Do nothing by default. This should be overwritten by specific islands.
   }
 
-  getDescriptionToBeHappy(): string {
-    // Should be overwritten by specific island.
-    return "";
-  }
-
   isGoalToBeHappy(): boolean {
     // Defaults to false, overwrite by specific island.
     return false;

@@ -7,6 +7,7 @@ export default class RecordedRocketController implements Landable {
   private rocket: Rocket;
   private recordedStates: RecordedState[];
   private currentRecordedInputIndex = 0;
+  private landed = false;
 
   constructor(rocket: Rocket, recordedStates: RecordedState[]) {
     this.rocket = rocket;
@@ -20,10 +21,13 @@ export default class RecordedRocketController implements Landable {
     const state = this.recordedStates[this.currentRecordedInputIndex];
     this.rocket.setPositionAndRotation(state.position, state.rotation);
     this.rocket.applyAnimation(state.inputX, state.inputY);
+    if (!state.isReadyToLand && this.landed) {
+      this.landed = false;
+    }
   }
 
   public isLanded(): boolean {
-    return this.recordedStates[this.currentRecordedInputIndex].isLanded;
+    return this.landed;
   }
 
   public isReadyToLand(): boolean {
@@ -31,7 +35,7 @@ export default class RecordedRocketController implements Landable {
   }
 
   public land() {
-    // Do nothing.
+    this.landed = true;
   }
 
   public getRocket(): Rocket {

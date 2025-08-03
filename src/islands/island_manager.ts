@@ -92,12 +92,6 @@ export default class IslandManager {
     }
   }
 
-  getOutstandingGoals(): string[] {
-    return this.islands
-      .filter(island => island.isGoalToBeHappy())
-      .map(island => island.getDescriptionToBeHappy());
-  }
-
   getNumHappyIslands(): number {
     return this.islands.filter(island => island.isGoalToBeHappy() && island.isHappy()).length;
   }
