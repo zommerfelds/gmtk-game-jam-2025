@@ -13,9 +13,29 @@ export default class IslandSkull extends Island {
   private hasLavaCountdown = -1;
   private rocketPresent = false;
 
+  private cactusStock: Phaser.GameObjects.Sprite;
+  private lavaStock: Phaser.GameObjects.Sprite;
+
   constructor(scene: Phaser.Scene, initialX: number, initialY: number) {
     super(scene, initialX, initialY, "island_skull");
     this.scene = scene;
+
+    this.lavaStock = scene.add.sprite(initialX - 85, initialY + 55, "island_stock");
+    scene.anims.createFromAseprite("island_stock", undefined, this.lavaStock);
+    this.lavaStock.play({ key: "0", repeat: -1 });
+
+    const lava_icon = scene.add.sprite(initialX - 85, initialY + 78, "icon_lava");
+    scene.anims.createFromAseprite("icon_lava", undefined, lava_icon);
+    lava_icon.setScale(2);
+
+    this.cactusStock = scene.add.sprite(initialX + 100, initialY + 5, "island_stock");
+    scene.anims.createFromAseprite("island_stock", undefined, this.cactusStock);
+    this.cactusStock.play({ key: "0", repeat: -1 });
+    this.cactusStock.flipX = true;
+
+    const cactus_icon = scene.add.sprite(initialX + 100, initialY + 28, "icon_cactus");
+    scene.anims.createFromAseprite("icon_cactus", undefined, cactus_icon);
+    cactus_icon.setScale(2);
   }
 
   interactWithRocket(rocket: Rocket, isPlayerRocket: boolean) {
@@ -53,6 +73,12 @@ export default class IslandSkull extends Island {
   processCycleStep() {
     this.hasLavaCountdown = Math.max(-1, this.hasLavaCountdown - 1);
     this.hasCactusCountdown = Math.max(-1, this.hasCactusCountdown - 1);
+
+    const lavaAnimationKey = Math.ceil((this.hasLavaCountdown / CYCLE_STEPS) * 10).toString();
+    this.lavaStock.play({ key: lavaAnimationKey, repeat: -1 });
+
+    const cactusAnimationKey = Math.ceil((this.hasCactusCountdown / CYCLE_STEPS) * 10).toString();
+    this.cactusStock.play({ key: cactusAnimationKey, repeat: -1 });
 
     if (!this.rocketPresent) {
       this.helpText?.destroy();

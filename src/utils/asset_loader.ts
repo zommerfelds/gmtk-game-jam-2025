@@ -19,6 +19,7 @@ export function preloadAssets(scene: Phaser.Scene) {
     "island_lake",
     "island_sign",
     "island_skull",
+    "island_stock",
     "shop_red",
     "shop_blue",
     "background_1",
