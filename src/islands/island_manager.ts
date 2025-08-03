@@ -70,6 +70,22 @@ export default class IslandManager {
       ...spawnerIslands,
     ];
 
+    new Obstacle(scene, 500, 1500, "obstacle_meteor", 0);
+    new Obstacle(scene, 500, 1200, "obstacle_meteor", 30);
+    new Obstacle(scene, 700, 1400, "obstacle_meteor", 150);
+    new Obstacle(scene, 615, 1555, "obstacle_meteor", 220);
+
+    const numObstacles = 1000;
+    for (let i = 0; i < numObstacles; i++) {
+      const angle = (i * 2 * Math.PI) / numObstacles;
+      const radius = 2100;
+      const hash = Math.sin(i * 12345.6789) * 10000;
+      const noiseRadius = (hash % 200) - 100;
+      const x = 600 + Math.cos(angle) * (radius + noiseRadius);
+      const y = 200 + Math.sin(angle) * (radius + noiseRadius);
+      new Obstacle(scene, x, y, "obstacle_meteor", (i * 33) % 360);
+    }
+
     for (const sp of spawnerIslands) {
       if (sp.getIsDiscovered()) {
         this.discoveredSpawnerIslands.add(sp);
