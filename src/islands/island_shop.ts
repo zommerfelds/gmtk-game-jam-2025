@@ -13,9 +13,10 @@ export enum ShopColor {
 
 export default class IslandShop extends Island {
   private good: GoodsType;
-  private suppliedCountdown: number = -1;
   private scene: Phaser.Scene;
   private helpText?: Phaser.GameObjects.Text;
+  private suppliedCountdown: number = -1;
+  private additionalHelpText = "";
 
   constructor(
     scene: Phaser.Scene,
@@ -23,9 +24,12 @@ export default class IslandShop extends Island {
     initialY: number,
     shopColor: ShopColor,
     good: GoodsType,
+    additionalHelpText?: string,
   ) {
     super(scene, initialX, initialY, `shop_${shopColor}`);
+    this.scene = scene;
     this.good = good;
+    this.additionalHelpText = additionalHelpText ? `\n${additionalHelpText}` : "";
     scene.add.sprite(initialX + 102, initialY - 87, good);
     this.getSprite().play({ key: "Closed", repeat: -1 });
   }
@@ -35,6 +39,39 @@ export default class IslandShop extends Island {
     if (rocket.tryTakeGood(this.good)) {
       this.getSprite().play({ key: "Open", repeat: -1 });
       this.suppliedCountdown = CYCLE_STEPS;
+    } else {
+      // TODO: currently this is shown for all rockets, even recorded rockets.
+      if (!this.helpText) {
+        const text = `Hey! I'm out of ${this.getGoodName()}!\nCould you create a supply loop for me?${
+          this.additionalHelpText
+        }`;
+        this.helpText = this.scene.add
+          .text(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100, text, {
+            wordWrap: { width: 600 },
+            fontSize: "20px",
+            align: "center",
+          })
+          .setOrigin(0.5, 0.5)
+          .setScrollFactor(0);
+
+        setTimeout(() => {
+          this.helpText?.destroy();
+          this.helpText = undefined;
+        }, 7000);
+      }
+    }
+  }
+
+  getGoodName(): string {
+    switch (this.good) {
+      case GoodsType.CACTUS:
+        return "cactus";
+      case GoodsType.LAVA:
+        return "lava";
+      case GoodsType.WATER:
+        return "water";
+      case GoodsType.NONE:
+        return "none";
     }
   }
 

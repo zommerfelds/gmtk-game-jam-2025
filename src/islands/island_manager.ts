@@ -33,7 +33,14 @@ export default class IslandManager {
 
     this.islands = [
       new IslandCacti(scene, 1100, 100),
-      new IslandShop(scene, 800, 500, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(
+        scene,
+        800,
+        500,
+        ShopColor.RED,
+        GoodsType.CACTUS,
+        "There is a farm just above here.",
+      ),
       new IslandDoom(scene, 1300, 1000),
       new IslandSkull(scene, 1000, 1000, cycleSteps, targetFramerate),
       // new IslandCave(scene, 700, 300),
@@ -97,9 +104,7 @@ export default class IslandManager {
   }
 
   getNumIslandsToMakeHappy(): number {
-    return this.islands
-      .filter(island => island.isGoalToBeHappy())
-      .length;
+    return this.islands.filter(island => island.isGoalToBeHappy()).length;
   }
 
   processCycleStep() {
