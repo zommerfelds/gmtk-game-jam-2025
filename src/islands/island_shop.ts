@@ -31,7 +31,8 @@ export default class IslandShop extends Island {
         this.scene = scene;
         this.good = good;
         this.additionalHelpText = additionalHelpText ? `\n${additionalHelpText}` : "";
-        scene.add.sprite(initialX + 102, initialY - 87, good);
+        var goodSprite = scene.add.sprite(initialX + 102, initialY - 87, good);
+        goodSprite.setScale(2)
         this.getSprite().play({ key: "Closed", repeat: -1 });
         this.stock = scene.add.sprite(initialX - 140, initialY, "shop_stock");
         scene.anims.createFromAseprite("shop_stock", undefined, this.stock);
