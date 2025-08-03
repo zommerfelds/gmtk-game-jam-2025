@@ -18,7 +18,7 @@ export default class IslandShop extends Island {
   private suppliedCountdown: number = -1;
   private additionalHelpText = "";
   private rocketPresent = false;
-  private stock: Phaser.GameObjects.Sprite
+  private stock: Phaser.GameObjects.Sprite;
 
   constructor(
     scene: Phaser.Scene,
@@ -33,9 +33,9 @@ export default class IslandShop extends Island {
     this.good = good;
     this.additionalHelpText = additionalHelpText ? `\n${additionalHelpText}` : "";
     var goodSprite = scene.add.sprite(initialX + 102, initialY - 87, good);
-    goodSprite.setScale(2)
+    goodSprite.setScale(2);
     this.getSprite().play({ key: "Closed", repeat: -1 });
-    this.stock = scene.add.sprite(initialX - 140, initialY, "shop_stock");
+    this.stock = scene.add.sprite(initialX - 130, initialY + 15, "shop_stock");
     scene.anims.createFromAseprite("shop_stock", undefined, this.stock);
     this.stock.play({ key: "0", repeat: -1 });
   }
@@ -82,7 +82,7 @@ export default class IslandShop extends Island {
   processCycleStep() {
     this.suppliedCountdown = Math.max(-1, this.suppliedCountdown - 1);
 
-    const stockAnimationKey = Math.ceil((this.suppliedCountdown / CYCLE_STEPS) * 10).toString()
+    const stockAnimationKey = Math.ceil((this.suppliedCountdown / CYCLE_STEPS) * 10).toString();
     this.stock.play({ key: stockAnimationKey, repeat: -1 });
 
     if (!this.isHappy()) {
