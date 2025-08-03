@@ -31,33 +31,45 @@ export default class GameUI {
     this.addPanel(0, SCREEN_HEIGHT - 60, SCREEN_WIDTH, 60);
     this.instructionText = scene.add
       .text(15, SCREEN_HEIGHT - 48, "", { lineSpacing: 5 })
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setDepth(100);
     this.rocketCountText = scene.add
       .text(SCREEN_WIDTH - 300, SCREEN_HEIGHT - 48, "", {})
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setDepth(100);
 
     this.watchBody = scene.add
       .image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_body")
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setDepth(100);
     this.watchArrow = scene.add
       .image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_arrow")
-      .setScrollFactor(0);
-    this.recordingStartMarker = scene.add.circle(0, 0, 6, 0xff0000).setScrollFactor(0);
+      .setScrollFactor(0)
+      .setDepth(100);
+    this.recordingStartMarker = scene.add
+      .circle(0, 0, 6, 0xff0000)
+      .setScrollFactor(0)
+      .setDepth(100);
     this.recordingStartMarker.setVisible(false);
 
     this.recordingText = scene.add
       .text(SCREEN_WIDTH - 15, 5, "", { wordWrap: { width: 400 }, align: "right" })
       .setScrollFactor(0)
-      .setOrigin(1, 0);
+      .setOrigin(1, 0)
+      .setDepth(100);
 
     this.addPanel(0, 0, 410, 60);
-    this.objectiveText = scene.add.text(15, 12, "", { lineSpacing: 5 }).setScrollFactor(0);
+    this.objectiveText = scene.add
+      .text(15, 12, "", { lineSpacing: 5 })
+      .setScrollFactor(0)
+      .setDepth(100);
   }
 
   private addPanel(x: number, y: number, w: number, h: number) {
     const n = this.scene.add
       .nineslice(x, y, "ui", "ui_panel_frame", w, h, 10, 10, 10, 10)
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setDepth(100);
     n.setOrigin(0, 0);
     return n;
   }
