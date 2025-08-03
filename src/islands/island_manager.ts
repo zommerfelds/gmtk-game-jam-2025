@@ -9,6 +9,8 @@ import { Rocket } from "../rockets/rocket";
 import IslandSkull from "./island_skull";
 import IslandCave from "./island_cave";
 import Landable from "../game_objects/Landable";
+import OminRocket from "../rockets/omin_rocket";
+import ReversibleRocket from "../rockets/reversible_rocket";
 import IslandShop, { ShopColor } from "./island_shop";
 import { GoodsType } from "./goods";
 
@@ -25,8 +27,8 @@ export default class IslandManager {
     };
 
     const spawnerIslands: SpawnerIsland[] = [
-      new SpawnerIsland(scene, 400, 400, true, onSpawnerDiscovered),
-      new SpawnerIsland(scene, 1200, 0, false, onSpawnerDiscovered),
+      new SpawnerIsland(scene, 400, 400, true, onSpawnerDiscovered, OminRocket),
+      new SpawnerIsland(scene, 1200, 0, false, onSpawnerDiscovered, ReversibleRocket),
     ];
 
     for (const sp of spawnerIslands) {
