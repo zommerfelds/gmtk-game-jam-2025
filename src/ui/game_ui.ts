@@ -4,7 +4,7 @@ import Vector2Like = Phaser.Types.Math.Vector2Like;
 import Text = Phaser.GameObjects.Text;
 import Arc = Phaser.GameObjects.Arc;
 import Image = Phaser.GameObjects.Image;
-import { CYCLE_SECONDS, CYCLE_STEPS, SCREEN_HEIGHT, SCREEN_WIDTH, TARGET_FRAMERATE } from "../constants";
+import { CYCLE_SECONDS, SCREEN_HEIGHT, SCREEN_WIDTH, TARGET_FRAMERATE } from "../constants";
 
 export default class GameUI {
   private recordingText: Text;
@@ -12,6 +12,7 @@ export default class GameUI {
   private watchArrow: Image;
   private recordingStartMarker: Arc;
   private instructionText: Text;
+  private rocketCountText: Text;
   private scene: Phaser.Scene;
 
   constructor(scene: Phaser.Scene) {
@@ -19,16 +20,21 @@ export default class GameUI {
 
     this.addPanel(0, SCREEN_HEIGHT - 60, SCREEN_WIDTH, 60);
     this.instructionText = scene.add
-      .text(15, SCREEN_HEIGHT - 48, "", {lineSpacing: 5})
+      .text(15, SCREEN_HEIGHT - 48, "", { lineSpacing: 5 })
       .setScrollFactor(0);
+    this.rocketCountText = scene.add.text(10, 10, "", {}).setScrollFactor(0);
 
-    this.watchBody = scene.add.image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_body").setScrollFactor(0);
-    this.watchArrow = scene.add.image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_arrow").setScrollFactor(0);
+    this.watchBody = scene.add
+      .image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_body")
+      .setScrollFactor(0);
+    this.watchArrow = scene.add
+      .image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_arrow")
+      .setScrollFactor(0);
     this.recordingStartMarker = scene.add.circle(0, 0, 6, 0xff0000).setScrollFactor(0);
     this.recordingStartMarker.setVisible(false);
 
     this.recordingText = scene.add
-      .text(500, 5, "", { wordWrap: { width: 400 }, align: "center"})
+      .text(500, 5, "", { wordWrap: { width: 400 }, align: "center" })
       .setScrollFactor(0)
       .setOrigin(0.5, 0);
   }
@@ -47,8 +53,10 @@ export default class GameUI {
     cycleWhenRecordingStarted: number,
     lastSpawnPoint: Vector2Like | null,
     numHappyIslands: number,
+    numRecordedRockets: number,
     hasMultipleSpawners: boolean,
   ) {
+    this.rocketCountText.setText(`Automated rockets: ${numRecordedRockets}`);
     this.recordingText.setText(playerRocket ? `Recording` : "");
 
     let returnMsg = "Ready for takeoff!";
@@ -57,12 +65,9 @@ export default class GameUI {
       lastSpawnPoint &&
       playerRocket.getFootPosition().distance(lastSpawnPoint) !== 0
     ) {
-      returnMsg = "Return to the start before the loop ends!";
-    } else if (
-      playerRocket &&
-      playerRocket.getHasMoved()
-    ) {
-      returnMsg = "You're back at the start.\nYou can wait here until the loop ends.";
+      returnMsg = "Return to the start before the loop ends!\nPress enter to self destruct";
+    } else if (playerRocket && playerRocket.getHasMoved()) {
+      returnMsg = "You're back at the start.\nWait here until the loop ends.";
     }
     // this.returnToStartText.setText(returnMsg);
 
@@ -74,9 +79,9 @@ export default class GameUI {
     this.instructionText.setText(
       playerRocket
         ? returnMsg
-        : `Press space to spawn a rocket${
-            hasMultipleSpawners ? "\nPress tab to switch spawner" : ""
-          }`,
+        : `Press space to spawn a rocket.${
+            hasMultipleSpawners ? " Press tab to switch spawner" : ""
+          }${numRecordedRockets > 0 ? " Press left/right to follow your rockets" : ""}`,
     );
     if (playerRocket) {
       const blink = Math.floor(currentCycleStep / (TARGET_FRAMERATE / 2)) % 2 === 0;
