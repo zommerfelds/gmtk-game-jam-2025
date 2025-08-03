@@ -4,7 +4,7 @@ import Vector2Like = Phaser.Types.Math.Vector2Like;
 import Text = Phaser.GameObjects.Text;
 import Arc = Phaser.GameObjects.Arc;
 import Image = Phaser.GameObjects.Image;
-import { CYCLE_SECONDS, SCREEN_HEIGHT, SCREEN_WIDTH, TARGET_FRAMERATE } from "../constants";
+import { CYCLE_SECONDS, CYCLE_STEPS, SCREEN_HEIGHT, SCREEN_WIDTH, TARGET_FRAMERATE } from "../constants";
 
 export default class GameUI {
   private recordingText: Text;
@@ -12,8 +12,12 @@ export default class GameUI {
   private watchArrow: Image;
   private recordingStartMarker: Arc;
   private instructionText: Text;
+  private objectiveText: Text;
   private rocketCountText: Text;
   private scene: Phaser.Scene;
+
+  private hasWon = false;
+  private stepsLeftToWin = -1;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -22,7 +26,7 @@ export default class GameUI {
     this.instructionText = scene.add
       .text(15, SCREEN_HEIGHT - 48, "", { lineSpacing: 5 })
       .setScrollFactor(0);
-    this.rocketCountText = scene.add.text(10, 10, "", {}).setScrollFactor(0);
+    this.rocketCountText = scene.add.text(SCREEN_WIDTH - 300, SCREEN_HEIGHT - 48, "", {}).setScrollFactor(0);
 
     this.watchBody = scene.add
       .image(SCREEN_WIDTH - 80, SCREEN_HEIGHT - 80, "watch_body")
@@ -34,9 +38,14 @@ export default class GameUI {
     this.recordingStartMarker.setVisible(false);
 
     this.recordingText = scene.add
-      .text(500, 5, "", { wordWrap: { width: 400 }, align: "center" })
+      .text(SCREEN_WIDTH - 15, 5, "", { wordWrap: { width: 400 }, align: "right" })
       .setScrollFactor(0)
-      .setOrigin(0.5, 0);
+      .setOrigin(1, 0);
+
+    this.addPanel(0, 0, 410, 60);
+    this.objectiveText = scene.add
+      .text(15, 12, "", { lineSpacing: 5 })
+      .setScrollFactor(0);
   }
 
   private addPanel(x: number, y: number, w: number, h: number) {
@@ -53,11 +62,36 @@ export default class GameUI {
     cycleWhenRecordingStarted: number,
     lastSpawnPoint: Vector2Like | null,
     numHappyIslands: number,
+    numIslandsToMakeHappy: number,
     numRecordedRockets: number,
     hasMultipleSpawners: boolean,
   ) {
-    this.rocketCountText.setText(`Automated rockets: ${numRecordedRockets}`);
+    this.rocketCountText.setText(`Active loops: ${numRecordedRockets}`);
     this.recordingText.setText(playerRocket ? `Recording` : "");
+
+    if (this.stepsLeftToWin == 0) {
+      this.hasWon = true;
+    }
+    if (numHappyIslands < numIslandsToMakeHappy) {
+      this.hasWon = false;
+    }
+
+    let currentObjectiveStateText = ""
+    if (this.hasWon) {
+      currentObjectiveStateText = "All shops are supplied sustainably!\nThe universe is happy :)"
+    } else if (numHappyIslands < numIslandsToMakeHappy) {
+      currentObjectiveStateText =
+        `${numHappyIslands} of ${numIslandsToMakeHappy} shops are currently supplied\nRecord loops to supply them sustainably`;
+      this.stepsLeftToWin = -1;
+    } else {
+      if (this.stepsLeftToWin == -1) {
+        this.stepsLeftToWin = CYCLE_STEPS + 5 * TARGET_FRAMERATE;
+      }
+      const secondsLeft = Math.ceil(this.stepsLeftToWin / TARGET_FRAMERATE).toFixed(0);
+      currentObjectiveStateText = `All shops are supplied\nKeep them supplied for ${secondsLeft} more seconds`;
+      this.stepsLeftToWin--;
+    }
+    this.objectiveText.setText(currentObjectiveStateText);
 
     let returnMsg = "Ready for takeoff!";
     if (
@@ -81,7 +115,7 @@ export default class GameUI {
         ? returnMsg
         : `Press space to spawn a rocket.${
             hasMultipleSpawners ? " Press tab to switch spawner" : ""
-          }${numRecordedRockets > 0 ? " Press left/right to follow your rockets" : ""}`,
+          }${numRecordedRockets > 0 ? "\nPress left/right to follow your rockets" : ""}`,
     );
     if (playerRocket) {
       const blink = Math.floor(currentCycleStep / (TARGET_FRAMERATE / 2)) % 2 === 0;

@@ -85,6 +85,7 @@ export default class IslandManager {
 
     if (landingIsland && landable.isReadyToLand()) {
       if (!landable.isLanded()) {
+        landable.land();
         landingIsland.interactWithRocket(landable.getRocket());
       }
       this.snapToIsland(landable.getRocket(), landingIsland);
@@ -99,6 +100,12 @@ export default class IslandManager {
 
   getNumHappyIslands(): number {
     return this.islands.filter(island => island.isGoalToBeHappy() && island.isHappy()).length;
+  }
+
+  getNumIslandsToMakeHappy(): number {
+    return this.islands
+      .filter(island => island.isGoalToBeHappy())
+      .length;
   }
 
   processCycleStep() {
