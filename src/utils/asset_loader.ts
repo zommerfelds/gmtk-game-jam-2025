@@ -22,19 +22,24 @@ export function preloadAssets(scene: Phaser.Scene) {
     "island_stock",
     "shop_red",
     "shop_blue",
-    "background_1",
-    "background_2",
-    "background_3",
     "flag_green",
     "shop_stock",
     "obstacle_meteor",
   ].forEach(name => loadSprite(scene, name));
 
   // Decoration sprites:
-  ["effect_explosion", "icon_cactus", "icon_lava"].forEach(name => loadSprite(scene, name, true));
+  ["effect_explosion", "icon_cactus", "icon_lava", "icon_water"].forEach(name => loadSprite(scene, name, true));
 
   // Static images:
-  ["watch_arrow", "watch_body", "ui", "particle_smoke"].forEach(name => {
+  [
+    "watch_arrow",
+    "watch_body",
+    "ui",
+    "particle_smoke",
+    "background_1",
+    "background_2",
+    "background_3",
+  ].forEach(name => {
     scene.load.image(name, `sprite_${name}.png`);
   });
 }

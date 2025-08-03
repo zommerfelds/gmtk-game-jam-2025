@@ -14,6 +14,7 @@ import ReversibleRocket from "../rockets/reversible_rocket";
 import IslandShop, { ShopColor } from "./island_shop";
 import { GoodsType } from "./goods";
 import Obstacle from "../obstacles/obstacle";
+import IslandLake from "./island_lake";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -59,7 +60,7 @@ export default class IslandManager {
       new IslandDoom(scene, 100, -500),
       new IslandSkull(scene, -600, 1000),
       // new IslandCave(scene, 700, 300),
-      new Island(scene, 1400, 1200, "island_lake"),
+      new IslandLake(scene, 1400, 1200),
       new IslandShop(scene, -800, 300, ShopColor.BLUE, GoodsType.LAVA),
       new IslandShop(scene, 1200, 900, ShopColor.BLUE, GoodsType.LAVA),
       new IslandShop(scene, 700, -900, ShopColor.BLUE, GoodsType.LAVA),
