@@ -30,7 +30,7 @@ export function preloadAssets(scene: Phaser.Scene) {
   ].forEach(name => loadSprite(scene, name));
 
   // Decoration sprites:
-  ["effect_explosion", "icon_cactus", "icon_lava"].forEach(name => loadSprite(scene, name, true));
+  ["effect_explosion", "icon_cactus", "icon_lava", "icon_water"].forEach(name => loadSprite(scene, name, true));
 
   // Static images:
   ["watch_arrow", "watch_body", "ui", "particle_smoke"].forEach(name => {
