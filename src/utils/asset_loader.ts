@@ -11,6 +11,7 @@ export function preloadAssets(scene: Phaser.Scene) {
   // Physical sprites:
   [
     "rocket",
+    "rocket_omin",
     "island_cacti",
     "island_cave",
     "island_doom",
