@@ -57,7 +57,7 @@ export default class InputHandler {
       xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard,
       triggerAxisGamepad !== 0 ? triggerAxisGamepad : yAxisKeyboard,
     );
-    this.rocketRotationalInput.set(
+    this.rocketDirectionalInput.set(
       xAxisJoystick !== 0 ? xAxisJoystick : xAxisKeyboard,
       yAxisJoystick !== 0 ? yAxisJoystick : yAxisKeyboard,
     );
