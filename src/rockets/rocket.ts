@@ -2,7 +2,7 @@ import "phaser";
 import Vector2 = Phaser.Math.Vector2;
 import Landable from "../game_objects/Landable";
 import Camera = Phaser.Cameras.Scene2D.Camera;
-import {GoodsType} from "../islands/goods";
+import { GoodsType } from "../islands/goods";
 
 export enum RocketControlType {
   /** Rockets that can move in multiple directions directly. */
@@ -22,7 +22,7 @@ export interface Rocket extends Landable {
    * @param {number} x - The value for the x-axis.
    * @param {number} y - The value for the y-axis.
    */
-  applyInput(x: number, y: number): void;
+  applyInput(x: number, y: number, selfDestructKeyPressed?: boolean): void;
 
   explode(): void;
 

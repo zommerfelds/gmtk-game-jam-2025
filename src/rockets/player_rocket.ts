@@ -33,8 +33,8 @@ export default class PlayerRocketController implements Landable {
    * @param {number} x - The value for the x-axis.
    * @param {number} y - The value for the y-axis.
    */
-  public applyInput(x: number, y: number) {
-    this.rocket.applyInput(x, y);
+  public applyInput(x: number, y: number, selfDestruct: boolean) {
+    this.rocket.applyInput(x, y, selfDestruct);
     this.recordedInputs.push({ x, y });
   }
 

@@ -16,7 +16,7 @@ export default class RecordedRocketController implements Landable {
 
   public applyNextRecordedInput() {
     const nextRecordedInput = this.recordedInputs[this.currentRecordedInputIndex];
-    this.rocket.applyInput(nextRecordedInput.x, nextRecordedInput.y);
+    this.rocket.applyInput(nextRecordedInput.x, nextRecordedInput.y, false);
     this.currentRecordedInputIndex += 1;
     this.currentRecordedInputIndex %= this.recordedInputs.length;
   }

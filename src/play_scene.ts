@@ -66,7 +66,8 @@ export default class PlayScene extends Phaser.Scene {
       const rocketInput = this.inputHandler.getRocketControlInput(
         this.playerRocketController.getRocket().getRocketControlType(),
       );
-      this.playerRocketController.applyInput(rocketInput.x, rocketInput.y);
+      const selfDestruct = this.inputHandler.isSelfDestructButtonJustDown();
+      this.playerRocketController.applyInput(rocketInput.x, rocketInput.y, selfDestruct);
     } else {
       if (this.inputHandler.isTabButtonJustDown()) {
         this.islandManager.selectNextSpawnerIsland();
