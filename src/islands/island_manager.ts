@@ -9,6 +9,8 @@ import { Rocket } from "../rockets/rocket";
 import IslandSkull from "./island_skull";
 import IslandCave from "./island_cave";
 import Landable from "../game_objects/Landable";
+import IslandShop, { ShopColor } from "./island_shop";
+import { GoodsType } from "./goods";
 
 export default class IslandManager {
   private readonly islands: Island[];
@@ -46,6 +48,8 @@ export default class IslandManager {
       new IslandSkull(scene, 0, 0, cycleSteps, targetFramerate),
       new IslandCave(scene, 700, 300),
       new Island(scene, 1400, 200, "island_lake"),
+      new IslandShop(scene, 1400, 600, ShopColor.RED, GoodsType.CACTUS),
+      new IslandShop(scene, -500, 300, ShopColor.BLUE, GoodsType.LAVA),
       ...spawnerIslands,
     ];
   }

@@ -28,6 +28,10 @@ export default class Island {
     this.sprite.play({ key: "Idle", repeat: -1 });
   }
 
+  getSprite(): Phaser.Physics.Matter.Sprite {
+    return this.sprite
+  }
+
   getLandingLine(): Vector2[] {
     return this.landingLine
   }
