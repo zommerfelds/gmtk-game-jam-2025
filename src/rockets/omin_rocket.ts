@@ -20,6 +20,24 @@ export default class OminRocket extends BaseRocket {
   }
 
   applyAnimation(xInput: number, yInput: number) {
-    // No animation yet.
+    if (yInput > 0 && xInput > 0) {
+      this.sprite.play({ key: "Up-Right", repeat: -1 }, true);
+    } else if (yInput > 0 && xInput == 0) {
+      this.sprite.play({ key: "Up", repeat: -1 }, true);
+    } else if (yInput > 0 && xInput < 0) {
+      this.sprite.play({ key: "Up-Left", repeat: -1 }, true);
+    } else if (yInput == 0 && xInput > 0) {
+      this.sprite.play({ key: "Right", repeat: -1 }, true);
+    } else if (yInput == 0 && xInput == 0) {
+      this.sprite.play({ key: "Idle", repeat: -1 }, true);
+    } else if (yInput == 0 && xInput < 0) {
+      this.sprite.play({ key: "Left", repeat: -1 }, true);
+    } else if (yInput < 0 && xInput > 0) {
+      this.sprite.play({ key: "Down-Right", repeat: -1 }, true);
+    } else if (yInput < 0 && xInput == 0) {
+      this.sprite.play({ key: "Down", repeat: -1 }, true);
+    } else if (yInput < 0 && xInput < 0) {
+      this.sprite.play({ key: "Down-Left", repeat: -1 }, true);
+    }
   }
 }
