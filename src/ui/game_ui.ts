@@ -5,7 +5,6 @@ import Text = Phaser.GameObjects.Text;
 import Arc = Phaser.GameObjects.Arc;
 import Image = Phaser.GameObjects.Image;
 import {
-  CYCLE_SECONDS,
   CYCLE_STEPS,
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
@@ -123,7 +122,7 @@ export default class GameUI {
     }
     // this.returnToStartText.setText(returnMsg);
 
-    const fractionOfCycle = currentCycleStep / TARGET_FRAMERATE / CYCLE_SECONDS;
+    const fractionOfCycle = currentCycleStep / CYCLE_STEPS;
     // this.outstandingGoalsText.setText(outstandingGoals);
     this.watchArrow.setRotation(fractionOfCycle * Math.PI * 2);
 
@@ -145,7 +144,7 @@ export default class GameUI {
       this.recordingText.setVisible(true);
     }
     if (playerRocket) {
-      const recordingFraction = cycleWhenRecordingStarted / TARGET_FRAMERATE / CYCLE_SECONDS;
+      const recordingFraction = cycleWhenRecordingStarted / CYCLE_STEPS;
       const angle = recordingFraction * Math.PI * 2 - Math.PI / 2;
       const r = 50;
       const cx = this.watchBody.x;

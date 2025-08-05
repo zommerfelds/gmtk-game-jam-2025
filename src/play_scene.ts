@@ -13,6 +13,9 @@ import { TARGET_FRAMERATE, CYCLE_SECONDS, CYCLE_STEPS } from "./constants";
 import { createBackground } from "./utils/background";
 
 export default class PlayScene extends Phaser.Scene {
+  private readonly deltaMin = 1000 / TARGET_FRAMERATE;
+  private accDelta = 0;
+
   private inputHandler: InputHandler;
   private playerRocketController?: PlayerRocketController;
   private recordedRockets: RecordedRocketController[] = [];
@@ -43,33 +46,21 @@ export default class PlayScene extends Phaser.Scene {
     this.ui = new GameUI(this);
   }
 
-  update() {
+  update(time: number, delta: number) {
     this.inputHandler.update();
+    this.accDelta += delta;
 
-    this.recordedRockets.forEach(recordedRocket => {
-      this.islandManager.checkLandingStatus(recordedRocket, /* isPlayerRocket= */ false);
-    });
-    if (this.playerRocketController) {
-      this.islandManager.checkLandingStatus(this.playerRocketController, /* isPlayerRocket= */ true);
+    while (this.accDelta >= this.deltaMin) {
+      this.accDelta -= this.deltaMin;
+      this.performCycleStep();
     }
 
-    if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
-      if (this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0) {
-        this.playerRocketController.getRocket().explode();
-        this.cameras.main.stopFollow();
-      } else {
-        this.recordedRockets.push(this.playerRocketController.finishRecording());
-      }
-      this.playerRocketController = null;
-      this.allowCameraMovement = false;
-      this.lastSpawnPoint = null;
-    } else if (this.playerRocketController) {
-      const rocketInput = this.inputHandler.getRocketControlInput(
-        this.playerRocketController.getRocket().getRocketControlType(),
-      );
-      const selfDestruct = this.inputHandler.isSelfDestructButtonJustDown();
-      this.playerRocketController.applyInput(rocketInput.x, rocketInput.y, selfDestruct);
-    } else {
+    const selfDestruct = this.inputHandler.isSelfDestructButtonJustDown();
+    if (selfDestruct) {
+      this.playerRocketController?.selfDestruct();
+    }
+
+    if (!this.playerRocketController) {
       // No rocket is currently controlled by the player.
       if (this.inputHandler.isTabButtonJustDown()) {
         if (!this.currentlyTrackedRecordedRocket) {
@@ -142,14 +133,6 @@ export default class PlayScene extends Phaser.Scene {
       }
     }
 
-    this.recordedRockets.forEach(recordedRocket => {
-      recordedRocket.advanceRecordedState();
-    });
-
-    this.islandManager.processCycleStep();
-
-    this.currentCycleStep += 1;
-    this.currentCycleStep %= CYCLE_STEPS;
     this.ui.update(
       this.currentCycleStep,
       this.playerRocketController ?? null,
@@ -161,6 +144,43 @@ export default class PlayScene extends Phaser.Scene {
       this.islandManager.hasMultipleSpawners(),
       this.currentlyTrackedRecordedRocket != null,
     );
+  }
+
+  private performCycleStep() {
+    this.currentCycleStep += 1;
+    this.currentCycleStep %= CYCLE_STEPS;
+
+    this.matter.step(this.deltaMin);
+
+    this.recordedRockets.forEach(recordedRocket => {
+      this.islandManager.checkLandingStatus(recordedRocket, /* isPlayerRocket= */ false);
+    });
+    if (this.playerRocketController) {
+      this.islandManager.checkLandingStatus(this.playerRocketController, /* isPlayerRocket= */ true);
+    }
+
+    if (this.playerRocketController && this.playerRocketController.shouldFinishRecording()) {
+      if (this.playerRocketController.getFootPosition().distance(this.lastSpawnPoint) != 0) {
+        this.playerRocketController.getRocket().explode();
+        this.cameras.main.stopFollow();
+      } else {
+        this.recordedRockets.push(this.playerRocketController.finishRecording());
+      }
+      this.playerRocketController = null;
+      this.allowCameraMovement = false;
+      this.lastSpawnPoint = null;
+    } else if (this.playerRocketController) {
+      const rocketInput = this.inputHandler.getRocketControlInput(
+        this.playerRocketController.getRocket().getRocketControlType(),
+      );
+      this.playerRocketController.applyInput(rocketInput.x, rocketInput.y);
+    }
+
+    this.recordedRockets.forEach(recordedRocket => {
+      recordedRocket.advanceRecordedState();
+    });
+
+    this.islandManager.processCycleStep();
   }
 
   private onRocketDestroyed(rocket: Rocket) {

@@ -7,13 +7,14 @@ const config = {
   physics: {
     default: "matter",
     matter: {
+      autoUpdate: false,
       gravity: { x: 0, y: 0.1 },
-      runner: {
-        // Use fixed time step for reproducible physics. However this means that the speed of the game
-        // will be tied to the frame rate.
-        isFixed: true,
-        fps: TARGET_FRAMERATE,
-      },
+      // runner: {
+      //   // Use fixed time step for reproducible physics. However this means that the speed of the game
+      //   // will be tied to the frame rate.
+      //   isFixed: true,
+      //   fps: TARGET_FRAMERATE,
+      // },
       // debug: true, // Uncomment to see physics shapes
     },
   },

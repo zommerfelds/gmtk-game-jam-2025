@@ -81,11 +81,11 @@ export default abstract class BaseRocket implements Rocket {
 
   public abstract getRocketControlType(): RocketControlType;
 
-  public applyInput(x: number, y: number, selfDestructKeyPressed: boolean = false) {
-    if (selfDestructKeyPressed) {
-      this.explode();
-      return;
-    }
+  public selfDestruct() {
+    this.explode();
+  }
+
+  public applyInput(x: number, y: number) {
     switch (this.getRocketControlType()) {
       case RocketControlType.ROTATIONAL:
         this.applyRotationalInput(x, y);

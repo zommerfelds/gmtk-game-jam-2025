@@ -32,7 +32,9 @@ export interface Rocket {
    * @param {number} x - The value for the x-axis.
    * @param {number} y - The value for the y-axis.
    */
-  applyInput(x: number, y: number, selfDestructKeyPressed?: boolean): void;
+  applyInput(x: number, y: number): void;
+
+  selfDestruct(): void;
 
   applyAnimation(xInput: number, yInput: number): void;
 

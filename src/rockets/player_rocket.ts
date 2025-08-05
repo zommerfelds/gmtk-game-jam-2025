@@ -35,9 +35,8 @@ export default class PlayerRocketController implements Landable {
    *
    * @param {number} x - The value for the x-axis.
    * @param {number} y - The value for the y-axis.
-   * @param {boolean} selfDestruct - Whether the rocket should destroy itself.
    */
-  public applyInput(x: number, y: number, selfDestruct: boolean) {
+  public applyInput(x: number, y: number) {
     this.idle = x === 0 && y === 0;
     if (!this.idle) {
       this.landed = false;
@@ -47,17 +46,21 @@ export default class PlayerRocketController implements Landable {
         this.firstMove = true;
       }
     }
-    this.rocket.applyInput(x, y, selfDestruct);
-    if (!selfDestruct) {
-      this.recordedStates.push({
-        position: this.rocket.getPosition(),
-        rotation: this.rocket.getRotation(),
-        isLanded: this.landed,
-        isReadyToLand: this.isReadyToLand(),
-        inputX: x,
-        inputY: y,
-      });
-    }
+
+    this.rocket.applyInput(x, y);
+
+    this.recordedStates.push({
+      position: this.rocket.getPosition(),
+      rotation: this.rocket.getRotation(),
+      isLanded: this.landed,
+      isReadyToLand: this.isReadyToLand(),
+      inputX: x,
+      inputY: y,
+    });
+  }
+
+  public selfDestruct() {
+    this.rocket.selfDestruct();
   }
 
   public shouldFinishRecording(): boolean {
