@@ -94,6 +94,7 @@ export default class IslandManager {
       new IslandSkull(scene, -600, 1000),
       new IslandSkull(scene, 1800, 1200),
       new IslandSkull(scene, 1500, -900),
+      new IslandShop(scene, 1100, -1000, ShopColor.RED, GoodsType.WATER),
       // new IslandCave(scene, 700, 300),
       new IslandLake(scene, 1400, 1200),
       new IslandShop(scene, -800, 300, ShopColor.BLUE, GoodsType.LAVA),
